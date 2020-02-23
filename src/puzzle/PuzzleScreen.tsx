@@ -205,6 +205,39 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
+            <filter
+              id="emitterGlow"
+              x="-250%"
+              y="-250%"
+              width="500%"
+              height="500%"
+            >
+              <feGaussianBlur result="blur3" stdDeviation={3} />
+              <feGaussianBlur result="blur5" stdDeviation={5} />
+              <feGaussianBlur result="blur10" stdDeviation={10} />
+              <feMerge>
+                <feMergeNode in="blur5" />
+                <feMergeNode in="blur10" />
+              </feMerge>
+            </filter>
+            <filter
+              id="laserBeamGlow"
+              x="-250%"
+              y="0"
+              width="500%"
+              height="100%"
+            >
+              <feGaussianBlur result="blur3" stdDeviation={3} />
+              <feGaussianBlur result="blur5" stdDeviation={5} />
+              <feGaussianBlur result="blur10" stdDeviation={10} />
+              <feMerge>
+                <feMergeNode in="blur3" />
+                <feMergeNode in="blur5" />
+                <feMergeNode in="blur10" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
           </defs>
 
           <ExteriorBorder />

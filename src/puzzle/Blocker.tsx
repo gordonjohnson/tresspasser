@@ -1,14 +1,15 @@
 import React from "react";
+import { BlockerState } from "./types";
 
-interface BlockerProps {
+interface BlockerProps extends BlockerState {
   ringIndex: number;
-  position: number;
+  ringIsSelected: boolean;
   debug: number;
 }
 
 export function Blocker(props: BlockerProps) {
-  const { position, ringIndex } = props;
-  const rotation = 30 * position;
+  const { startingPosition, ringIndex } = props;
+  const rotation = 30 * startingPosition;
   const translation = -49 * ringIndex;
   return (
     <g

@@ -48,6 +48,7 @@ function Ring(props: RingProps) {
         <Laser
           key={laser.startingPosition}
           ringIndex={index}
+          ringIsSelected={isSelected}
           debug={laser.currentRotatedPosition}
           {...laser}
         />
@@ -56,8 +57,9 @@ function Ring(props: RingProps) {
         <Blocker
           key={blocker.startingPosition}
           ringIndex={index}
-          position={blocker.startingPosition}
+          ringIsSelected={isSelected}
           debug={blocker.currentRotatedPosition}
+          {...blocker}
         />
       ))}
     </g>
