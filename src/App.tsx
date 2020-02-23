@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import PuzzleScreen from "./puzzle/PuzzleScreen";
+import "./App.css";
+import STAGES from "./puzzle/stages";
 
 function App() {
+  const [stage, setStage] = useState(0);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <label
+        style={{
+          color: "white",
+          fontSize: 24,
+          float: "right",
+          marginRight: 50,
+          position: "fixed"
+        }}
+      >
+        Stage Select{" "}
+        <select
+          onChange={e => {
+            setStage(parseInt(e.currentTarget.value, 10));
+          }}
+          style={{ fontSize: "inherit" }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          {STAGES.map((s, idx) => (
+            <option key={idx}>{idx}</option>
+          ))}
+        </select>
+      </label>
+
+      {/* Routes */}
+      <PuzzleScreen key={stage} stageIndex={stage} />
+    </>
   );
 }
 
