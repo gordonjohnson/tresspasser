@@ -183,6 +183,29 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
           viewBox="0 0 1920 861"
           style={{ width: "100vw", height: "100vh" }}
         >
+          <defs>
+            <filter id="selectedRingGlow">
+              <feGaussianBlur result="blur5" stdDeviation={5} />
+              <feGaussianBlur result="blur10" stdDeviation={10} />
+              <feMerge>
+                <feMergeNode in="blur5" />
+                <feMergeNode in="blur5" />
+                <feMergeNode in="blur10" />
+                <feMergeNode in="blur10" />
+                <feMergeNode in="blur10" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="ringGlow">
+              <feGaussianBlur result="blur5" stdDeviation={5} />
+              <feGaussianBlur result="blur10" stdDeviation={10} />
+              <feMerge>
+                <feMergeNode in="blur5" />
+                <feMergeNode in="blur10" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
           <ExteriorBorder />
           {hasWon && (

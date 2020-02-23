@@ -36,12 +36,13 @@ function Ring(props: RingProps) {
     >
       <circle
         fill="none"
-        stroke={isSelected ? "#f8ca10ff" : "white"}
+        stroke={isSelected ? "rgb(248, 171, 18)" : "rgba(255,255,255,0.66)"}
         strokeWidth={isSelected ? 5 : 3}
         strokeOpacity={isDisabled ? 0.2 : 1}
         cx={960}
         cy={421.5}
         r={radius}
+        filter={isSelected ? "url(#selectedRingGlow)" : "url(#ringGlow)"}
       />
       {lasers.map(laser => (
         <Laser
