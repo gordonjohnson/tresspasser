@@ -1,15 +1,37 @@
 import React from "react";
 import { LaserState } from "./types";
+import { RING_RADIUS, PORT_RADIUS } from "./constants";
 
 export interface LaserProps extends LaserState {
   ringIndex: number;
   debug: number;
 }
 
+function calculateBeamLength(props: LaserProps): number {
+  const {
+    currentRotatedPosition,
+    currentBeamTarget,
+    ringIndex,
+    isTouchingPort,
+    obstructedBy
+  } = props;
+
+  if (isTouchingPort) {
+    return PORT_RADIUS + RING_RADIUS[ringIndex];
+  } else if (currentRotatedPosition === obstructedBy?.position) {
+    return RING_RADIUS[ringIndex] - RING_RADIUS[obstructedBy.ringIndex];
+  } else if (currentBeamTarget === obstructedBy?.position) {
+    return RING_RADIUS[ringIndex] + RING_RADIUS[obstructedBy.ringIndex] - 15.5;
+  } else {
+    return 1300;
+  }
+}
+
 export function Laser(props: LaserProps) {
   const { startingPosition, ringIndex, isTouchingPort } = props;
   const rotation = 30 * startingPosition;
   const translateY = 48.5 * ringIndex;
+  const beamLength = calculateBeamLength(props);
 
   return (
     <g
@@ -18,6 +40,14 @@ export function Laser(props: LaserProps) {
         transform: `rotate(${rotation}deg) `
       }}
     >
+      <rect
+        id={`laser-beam-${ringIndex}-${startingPosition}`}
+        x={isTouchingPort ? 950 : 955}
+        y={274 - translateY}
+        width={isTouchingPort ? 20 : 10}
+        height={beamLength}
+        fill={isTouchingPort ? "lime" : "red"}
+      />
       <circle
         cx={960}
         cy={274 - translateY}
@@ -40,13 +70,7 @@ export function Laser(props: LaserProps) {
         strokeLinecap="round"
         d={`m 950,${275.79436 - translateY} 10,9.70564 9.41127,-9.70564`}
       />
-      <path
-        d={`M 960,${298 - translateY} v 1300`}
-        fill="none"
-        stroke={isTouchingPort ? "lime" : "red"}
-        strokeWidth="5"
-        strokeLinecap="butt"
-      />
+
       <text
         x={947}
         y={288 - translateY}
