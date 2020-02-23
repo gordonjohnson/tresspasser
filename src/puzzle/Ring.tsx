@@ -43,6 +43,7 @@ function Ring(props: RingProps) {
         cy={421.5}
         r={radius}
         filter={isSelected ? "url(#selectedRingGlow)" : "url(#ringGlow)"}
+        style={{ mixBlendMode: "screen" }}
       />
       {lasers.map(laser => (
         <Laser
