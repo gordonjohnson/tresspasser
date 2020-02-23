@@ -51,6 +51,7 @@ export function Laser(props: LaserProps) {
       {isTouchingPort ? (
         <>
           <rect
+            style={{ mixBlendMode: "screen" }}
             id={`outer-laser-beam-${ringIndex}-${startingPosition}`}
             x={960 - 19.5}
             y={274 - translateY}
@@ -60,6 +61,7 @@ export function Laser(props: LaserProps) {
             filter={"url(#outerLaserBeamGlow)"}
           />
           <rect
+            style={{ mixBlendMode: "screen" }}
             id={`middle-laser-beam-${ringIndex}-${startingPosition}`}
             x={960 - 7.5}
             y={274 - translateY}
@@ -69,6 +71,7 @@ export function Laser(props: LaserProps) {
             filter={"url(#middleLaserBeamGlow)"}
           />
           <rect
+            style={{ mixBlendMode: "screen" }}
             id={`core-laser-beam-${ringIndex}-${startingPosition}`}
             x={960 - 4.5}
             y={274 - translateY}
@@ -81,6 +84,7 @@ export function Laser(props: LaserProps) {
       ) : (
         <>
           <rect
+            style={{ mixBlendMode: "screen" }}
             id={`outer-laser-beam-${ringIndex}-${startingPosition}`}
             x={960 - 13}
             y={274 - translateY}
@@ -90,6 +94,7 @@ export function Laser(props: LaserProps) {
             filter={"url(#outerLaserBeamGlow)"}
           />
           <rect
+            style={{ mixBlendMode: "screen" }}
             id={`middle-laser-beam-${ringIndex}-${startingPosition}`}
             x={960 - 5}
             y={274 - translateY}
@@ -99,6 +104,7 @@ export function Laser(props: LaserProps) {
             filter={"url(#middleLaserBeamGlow)"}
           />
           <rect
+            style={{ mixBlendMode: "screen" }}
             id={`core-laser-beam-${ringIndex}-${startingPosition}`}
             x={960 - 3}
             y={274 - translateY}
