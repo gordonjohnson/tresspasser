@@ -22,7 +22,7 @@ function calculateBeamLength(props: LaserProps): number {
   } else if (currentRotatedPosition === obstructedBy?.position) {
     return RING_RADIUS[ringIndex] - RING_RADIUS[obstructedBy.ringIndex];
   } else if (currentBeamTarget === obstructedBy?.position) {
-    return RING_RADIUS[ringIndex] + RING_RADIUS[obstructedBy.ringIndex] - 15.5;
+    return RING_RADIUS[ringIndex] + RING_RADIUS[obstructedBy.ringIndex] - 18;
   } else {
     return 1400;
   }
