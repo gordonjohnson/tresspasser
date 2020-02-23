@@ -120,8 +120,8 @@ export function Laser(props: LaserProps) {
         id={`emitter-glow-${ringIndex}-${startingPosition}`}
         cx={960}
         cy={274 - translateY}
-        r={23}
-        fill={isTouchingPort ? "lime" : "red"}
+        r={ringIsSelected ? 28 : 23}
+        fill={isTouchingPort ? "#39ff14" : "#f00"}
         filter={"url(#emitterGlow)"}
         style={{ mixBlendMode: ringIsSelected ? "screen" : "normal" }}
       />
