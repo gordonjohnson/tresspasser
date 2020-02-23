@@ -221,21 +221,31 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
               </feMerge>
             </filter>
             <filter
-              id="laserBeamGlow"
+              id="coreLaserBeamGlow"
               x="-250%"
               y="0"
               width="500%"
               height="100%"
             >
-              <feGaussianBlur result="blur3" stdDeviation={3} />
-              <feGaussianBlur result="blur5" stdDeviation={5} />
+              <feGaussianBlur result="blur1" stdDeviation={1} />
+            </filter>
+            <filter
+              id="middleLaserBeamGlow"
+              x="-250%"
+              y="0"
+              width="500%"
+              height="100%"
+            >
+              <feGaussianBlur result="blur2" stdDeviation={2} />
+            </filter>
+            <filter
+              id="outerLaserBeamGlow"
+              x="-250%"
+              y="0"
+              width="500%"
+              height="100%"
+            >
               <feGaussianBlur result="blur10" stdDeviation={10} />
-              <feMerge>
-                <feMergeNode in="blur3" />
-                <feMergeNode in="blur5" />
-                <feMergeNode in="blur10" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
             </filter>
 
           </defs>

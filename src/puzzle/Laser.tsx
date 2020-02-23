@@ -47,15 +47,69 @@ export function Laser(props: LaserProps) {
           Instead, we use a <rect> to create the beam. That way we can
           leverage objectBoundingBox units in the filter definition.
         */}
-      <rect
-        id={`laser-beam-${ringIndex}-${startingPosition}`}
-        x={isTouchingPort ? 950 : 955}
-        y={274 - translateY}
-        width={isTouchingPort ? 20 : 10}
-        height={beamLength}
-        fill={isTouchingPort ? "lime" : "red"}
-        filter={"url(#laserBeamGlow)"}
-      />
+
+      {isTouchingPort ? (
+        <>
+          <rect
+            id={`outer-laser-beam-${ringIndex}-${startingPosition}`}
+            x={960 - 19.5}
+            y={274 - translateY}
+            width={39}
+            height={beamLength}
+            fill={"#39ff14"}
+            filter={"url(#outerLaserBeamGlow)"}
+          />
+          <rect
+            id={`middle-laser-beam-${ringIndex}-${startingPosition}`}
+            x={960 - 7.5}
+            y={274 - translateY}
+            width={15}
+            height={beamLength}
+            fill={"#ddff99"}
+            filter={"url(#middleLaserBeamGlow)"}
+          />
+          <rect
+            id={`core-laser-beam-${ringIndex}-${startingPosition}`}
+            x={960 - 4.5}
+            y={274 - translateY}
+            width={9}
+            height={beamLength}
+            fill="white"
+            filter={"url(#coreLaserBeamGlow)"}
+          />
+        </>
+      ) : (
+        <>
+          <rect
+            id={`outer-laser-beam-${ringIndex}-${startingPosition}`}
+            x={960 - 13}
+            y={274 - translateY}
+            width={26}
+            height={beamLength}
+            fill={"#f00"}
+            filter={"url(#outerLaserBeamGlow)"}
+          />
+          <rect
+            id={`middle-laser-beam-${ringIndex}-${startingPosition}`}
+            x={960 - 5}
+            y={274 - translateY}
+            width={10}
+            height={beamLength}
+            fill={"#ff9ca9"}
+            filter={"url(#middleLaserBeamGlow)"}
+          />
+          <rect
+            id={`core-laser-beam-${ringIndex}-${startingPosition}`}
+            x={960 - 3}
+            y={274 - translateY}
+            width={6}
+            height={beamLength}
+            fill="white"
+            filter={"url(#coreLaserBeamGlow)"}
+          />
+        </>
+      )}
+
       <circle
         id={`emitter-glow-${ringIndex}-${startingPosition}`}
         cx={960}
