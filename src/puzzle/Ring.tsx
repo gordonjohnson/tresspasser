@@ -18,7 +18,7 @@ function Ring(props: RingProps) {
     isSelected = false,
     lasers = [],
     blockers = [],
-    isDisabled,
+    isDisabled = false,
     rotationOffset
   } = props;
 
@@ -50,7 +50,7 @@ function Ring(props: RingProps) {
           key={laser.startingPosition}
           ringIndex={index}
           ringIsSelected={isSelected}
-          debug={laser.currentRotatedPosition}
+          ringIsDisabled={isDisabled}
           {...laser}
         />
       ))}

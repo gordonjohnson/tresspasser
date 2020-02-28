@@ -184,6 +184,9 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
           style={{ width: "100vw", height: "100vh" }}
         >
           <defs>
+            <mask id="portRadiusCutoff" maskUnits="userSpaceOnUse">
+              <circle cx={960} cy={421.5} r={PORT_RADIUS} fill="white" />
+            </mask>
             <filter id="selectedRingGlow">
               <feGaussianBlur result="blur5" stdDeviation={5} />
               <feGaussianBlur result="blur10" stdDeviation={10} />
@@ -272,10 +275,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
             />
           ))}
 
-          {ringStates
-            .slice()
-            .reverse()
-            .map(
+          {ringStates.map(
               ring =>
                 ring && (
                   <Ring

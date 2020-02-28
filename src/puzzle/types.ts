@@ -20,18 +20,20 @@ export interface RingState {
   blockers: Array<BlockerState>;
 }
 
-export interface LaserState {
+export interface Obstructor {
+  ringIndex: number;
+  position: number;
+}
+
+export interface RingPositionedItem {
   startingPosition: number;
   currentRotatedPosition: number;
+}
+
+export interface LaserState extends RingPositionedItem {
   currentBeamTarget: number;
-  obstructedBy?: {
-    ringIndex: number;
-    position: number;
-  };
+  obstructedBy?: Obstructor;
   isTouchingPort?: boolean;
 }
 
-export interface BlockerState {
-  startingPosition: number;
-  currentRotatedPosition: number;
-}
+export interface BlockerState extends RingPositionedItem {}
