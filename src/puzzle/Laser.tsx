@@ -201,7 +201,7 @@ const GreenLaserBeam = (props: LaserProps) => {
   const y = ORIGIN.y - RING_RADIUS[ringIndex];
 
   const coreWidth = 12;
-  const coreHeight = 600;
+  const coreHeight = 800;
 
   return (
     <g

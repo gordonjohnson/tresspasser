@@ -4,7 +4,7 @@ export const RING_RADIUS_STEP = 48;
 
 export const RING_RADIUS = [147, 195, 243, 291];
 
-export const PORT_RADIUS = 336;
+export const PORT_RADIUS = 337;
 
 export const BEAM_LENGTH = 1400;
 
