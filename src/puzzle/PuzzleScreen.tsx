@@ -7,6 +7,13 @@ import { LaserState, RingState, StageRingLayout } from "./types";
 import { normalize } from "./utils";
 import { PORT_RADIUS, RING_RADIUS } from "./constants";
 
+import UIfx from "uifx";
+const portPoweredFx = new UIfx(require("./../sounds/port-powered.mp3"));
+const finalPortPoweredFx = new UIfx(
+  require("./../sounds/final-port-powered.mp3")
+);
+const ringSelectedFx = new UIfx(require("./../sounds/ring-selected.mp3"));
+
 interface PuzzleScreenProps {
   stageIndex: number;
 }
@@ -72,13 +79,39 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     document.removeEventListener("keydown", this.keyboardListener);
   }
 
+  componentDidUpdate(prevProps: PuzzleScreenProps, prevState: any) {
+    if (this.state.selected !== prevState.selected) {
+      ringSelectedFx.play();
+    }
+
+    const prevPoweredPorts = this.calculatePoweredPorts(
+      this.calculateAllRingStates(prevState)
+    );
+    const poweredPorts = this.calculatePoweredPorts(
+      this.calculateAllRingStates(this.state)
+    );
+    const hasWon = this.currentStage.ports.every(p => poweredPorts.has(p));
+
+    for (let port of poweredPorts) {
+      if (!prevPoweredPorts.has(port)) {
+        if (hasWon) {
+          finalPortPoweredFx.play();
+        } else {
+          portPoweredFx.play();
+        }
+        break;
+      }
+    }
+  }
+
   calculateRingState = (
     ringIndex: number,
-    currentRing: StageRingLayout
+    currentRing: StageRingLayout,
+    state: PuzzleScreenState
   ): RingState => {
-    const rotationOffset = this.state.rotation[ringIndex];
-    const isDisabled = this.state.disabled[ringIndex];
-    const isSelected = this.state.selected === ringIndex;
+    const rotationOffset = state.rotation[ringIndex];
+    const isDisabled = state.disabled[ringIndex];
+    const isSelected = state.selected === ringIndex;
 
     const lasers = currentRing.lasers.map(laserPosition => ({
       startingPosition: laserPosition,
@@ -146,14 +179,14 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     }
   };
 
-  calculateAllRingStates = () => {
+  calculateAllRingStates = (state = this.state) => {
     const ringStates: Array<RingState | null> = [];
 
     for (let [ringIndex, ring] of this.currentStage.rings.entries()) {
       if (!ring) {
         ringStates[ringIndex] = null;
       } else {
-        ringStates[ringIndex] = this.calculateRingState(ringIndex, ring);
+        ringStates[ringIndex] = this.calculateRingState(ringIndex, ring, state);
       }
     }
 
