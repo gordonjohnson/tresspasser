@@ -6,13 +6,7 @@ import STAGES from "./stages";
 import { LaserState, RingState, StageRingLayout } from "./types";
 import { normalize } from "./utils";
 import { PORT_RADIUS, RING_RADIUS } from "./constants";
-
-import UIfx from "uifx";
-const portPoweredFx = new UIfx(require("./../sounds/port-powered.mp3"));
-const finalPortPoweredFx = new UIfx(
-  require("./../sounds/final-port-powered.mp3")
-);
-const ringSelectedFx = new UIfx(require("./../sounds/ring-selected.mp3"));
+import * as soundEffects from "./../sounds/soundEffects";
 
 interface PuzzleScreenProps {
   stageIndex: number;
@@ -73,6 +67,9 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
 
   componentDidMount() {
     document.addEventListener("keydown", this.keyboardListener);
+    soundEffects.startStage.play();
+    soundEffects.electricalHum.play();
+    soundEffects.backgroundMusic.play();
   }
 
   componentWillUnmount() {
@@ -81,7 +78,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
 
   componentDidUpdate(prevProps: PuzzleScreenProps, prevState: any) {
     if (this.state.selected !== prevState.selected) {
-      ringSelectedFx.play();
+      soundEffects.ringSelected.play();
     }
 
     const prevPoweredPorts = this.calculatePoweredPorts(
@@ -95,9 +92,9 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     for (let port of poweredPorts) {
       if (!prevPoweredPorts.has(port)) {
         if (hasWon) {
-          finalPortPoweredFx.play();
+          soundEffects.finalPortPowered.play();
         } else {
-          portPoweredFx.play();
+          soundEffects.portPowered.play();
         }
         break;
       }
