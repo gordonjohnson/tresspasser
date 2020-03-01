@@ -211,7 +211,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1920 861"
-          style={{ width: "100vw", height: "100vh" }}
+          style={{ width: "100vw", height: "100vh", animation: "fadeIn 1.6s" }}
         >
           <defs>
             <mask id="portRadiusCutoff" maskUnits="userSpaceOnUse">
