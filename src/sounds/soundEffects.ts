@@ -21,4 +21,8 @@ export const finalPortPowered = soundEffect(
 export const portPowered = soundEffect(require("./port-powered.mp3"));
 export const ringSelected = soundEffect(require("./ring-selected.mp3"));
 export const startStage = soundEffect(require("./start-stage.mp3"));
-export const backgroundMusic = soundEffect(require("./bg-music.mp3"), 0.5);
+export const backgroundMusic = soundEffect(
+  require("./bg-music.mp3"),
+  0.5,
+  true
+);
