@@ -1,0 +1,70 @@
+.menuScreen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+
+  .title {
+    animation: titleAnimation 1.5s ease-in;
+    animation-fill-mode: forwards;
+    font-family: "Alien League Expand";
+    color: white;
+    font-size: 100px;
+    text-shadow: 0 0 5px currentColor;
+    letter-spacing: 2px;
+    font-weight: bold;
+
+    > em {
+      font-style: normal;
+      color: lime;
+      text-shadow: 0 0 5px currentColor, 0 0 10px currentColor,
+        0 0 20px currentColor, 0 0 30px currentColor, 0 0 60px currentColor;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    animation: buttonsAnimation 1s;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+    opacity: 0;
+
+    button {
+      font-family: "Aguda";
+      font-weight: bold;
+      font-size: 32px;
+      color: white;
+      background: none;
+      border: none;
+      padding: 1rem;
+      margin: 1rem;
+    }
+  }
+}
+
+@keyframes titleAnimation {
+  0% {
+    opacity: 0;
+    letter-spacing: 100px;
+  }
+  33% {
+    letter-spacing: 2px;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes buttonsAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
