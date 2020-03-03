@@ -282,22 +282,21 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
               <feGaussianBlur result="blur10" stdDeviation={10} />
             </filter>
 
+            <radialGradient id="victoryMessageRadialGradient">
+              <stop offset="0%" stopColor="#FFF" stopOpacity={0.66} />
+              <stop offset="100%" stopColor="#FFF" stopOpacity={0} />
+            </radialGradient>
+            <linearGradient
+              id="victoryMessageLinearGradient"
+              gradientTransform="rotate(90)"
+            >
+              <stop offset="0%" stopColor="#173144" stopOpacity={0.97} />
+              <stop offset="100%" stopColor="#1C4B72" stopOpacity={0.97} />
+            </linearGradient>
           </defs>
 
           <ExteriorBorder />
-          {hasWon && (
-            <text
-              x="50%"
-              y="0"
-              textAnchor="middle"
-              fill="red"
-              stroke="white"
-              strokeWidth={2}
-              style={{ fontSize: 40, fontWeight: "bold" }}
-            >
-              YOU A WINNER HAHAHA
-            </text>
-          )}
+
           {this.currentStage.ports.map(position => (
             <PowerPort
               key={position}
@@ -320,6 +319,58 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
                   />
                 )
             )}
+
+          {hasWon && (
+            <g
+              style={{
+                animation: "fadeIn 1s",
+                transformOrigin: "center"
+              }}
+            >
+              <rect
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                fill="url(#victoryMessageRadialGradient)"
+              />
+              <rect
+                x="30%"
+                y="30%"
+                width="40%"
+                height="40%"
+                fill="url(#victoryMessageLinearGradient)"
+                stroke="#97BFB7"
+                opacity="1"
+              />
+              <text
+                x="50%"
+                y="40%"
+                textAnchor="middle"
+                style={{
+                  fontSize: 40,
+                  fontWeight: "bold",
+                  fontFamily: "Aguda"
+                }}
+              >
+                <tspan fill="#FFF" x="50%" textAnchor="middle">
+                  AWESOME
+                </tspan>
+                <tspan fill="#FFF" x="50%" textAnchor="middle" dy="1em">
+                  You did it
+                </tspan>
+                <tspan
+                  fill="#FFF"
+                  x="50%"
+                  textAnchor="middle"
+                  dy="4em"
+                  onClick={() => alert("test")}
+                >
+                  Continue
+                </tspan>
+              </text>
+            </g>
+          )}
         </svg>
 
       </>
