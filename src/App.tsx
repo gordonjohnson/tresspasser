@@ -1,12 +1,13 @@
 import React from "react";
+import {
+  GameContextConsumer,
+  GameContextProvider,
+  useGameContext
+} from "./GameContext";
+import MenuScreen from "./menu/MenuScreen";
 import PuzzleScreen from "./puzzle/PuzzleScreen";
 import STAGES from "./puzzle/stages";
-import MenuScreen from "./menu/MenuScreen";
-import {
-  useGameContext,
-  GameContextProvider,
-  GameContextConsumer
-} from "./GameContext";
+import VolumeControl from "./VolumeControl";
 import "./App.css";
 
 function DebugStageSelector() {
@@ -47,6 +48,7 @@ function DebugStageSelector() {
 function App() {
   return (
     <GameContextProvider>
+      <VolumeControl />
       <DebugStageSelector />
       <GameContextConsumer>
         {context => {
