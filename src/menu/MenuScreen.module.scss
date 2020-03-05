@@ -28,19 +28,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    animation: buttonsAnimation 1s;
+    animation: buttonsFadeIn 1s;
     animation-delay: 1s;
     animation-fill-mode: forwards;
     opacity: 0;
 
-    button {
-      font-family: "Aguda";
-      font-weight: bold;
-      font-size: 32px;
-      color: white;
-      background: none;
-      border: none;
-      padding: 1rem;
+    > button {
       margin: 1rem;
     }
   }
@@ -60,7 +53,7 @@
   }
 }
 
-@keyframes buttonsAnimation {
+@keyframes buttonsFadeIn {
   from {
     opacity: 0;
   }
