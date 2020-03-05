@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ExteriorBorder from "./ExteriorBorder";
 import PowerPort from "./PowerPort";
 import Ring from "./Ring";
+import StageCompletedDialog from "./StageCompletedDialog";
 import STAGES from "./stages";
 import { LaserState, RingState, StageRingLayout } from "./types";
 import { normalize } from "./utils";
@@ -89,14 +90,15 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     );
     const hasWon = this.currentStage.ports.every(p => poweredPorts.has(p));
 
-    for (let port of poweredPorts) {
-      if (!prevPoweredPorts.has(port)) {
-        if (hasWon) {
-          soundEffects.finalPortPowered.play();
-        } else {
+    if (hasWon) {
+      soundEffects.finalPortPowered.play();
+      document.removeEventListener("keydown", this.keyboardListener);
+    } else {
+      for (let port of poweredPorts) {
+        if (!prevPoweredPorts.has(port)) {
           soundEffects.portPowered.play();
+          break;
         }
-        break;
       }
     }
   }
@@ -211,7 +213,13 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1920 861"
-          style={{ width: "100vw", height: "100vh", animation: "fadeIn 1.6s" }}
+          style={{
+            width: "100vw",
+            height: "100vh",
+            animation: "fadeIn 1.6s",
+            transition: "all 1s",
+            filter: hasWon ? "blur(5px)" : undefined
+          }}
           preserveAspectRatio="xMidYMid slice"
         >
           <defs>
@@ -306,72 +314,22 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
           ))}
 
           {ringStates.map(
-              ring =>
-                ring && (
-                  <Ring
-                    key={ring.index}
-                    index={ring.index}
-                    isSelected={ring.index === this.state.selected}
-                    lasers={ring.lasers}
-                    blockers={ring.blockers}
-                    rotationOffset={ring.rotationOffset}
-                    isDisabled={ring.isDisabled}
-                  />
-                )
-            )}
-
-          {hasWon && (
-            <g
-              style={{
-                animation: "fadeIn 1s",
-                transformOrigin: "center"
-              }}
-            >
-              <rect
-                x="0"
-                y="0"
-                width="100%"
-                height="100%"
-                fill="url(#victoryMessageRadialGradient)"
-              />
-              <rect
-                x="30%"
-                y="30%"
-                width="40%"
-                height="40%"
-                fill="url(#victoryMessageLinearGradient)"
-                stroke="#97BFB7"
-                opacity="1"
-              />
-              <text
-                x="50%"
-                y="40%"
-                textAnchor="middle"
-                style={{
-                  fontSize: 40,
-                  fontWeight: "bold",
-                  fontFamily: "Aguda"
-                }}
-              >
-                <tspan fill="#FFF" x="50%" textAnchor="middle">
-                  AWESOME
-                </tspan>
-                <tspan fill="#FFF" x="50%" textAnchor="middle" dy="1em">
-                  You did it
-                </tspan>
-                <tspan
-                  fill="#FFF"
-                  x="50%"
-                  textAnchor="middle"
-                  dy="4em"
-                  onClick={() => alert("test")}
-                >
-                  Continue
-                </tspan>
-              </text>
-            </g>
+            ring =>
+              ring && (
+                <Ring
+                  key={ring.index}
+                  index={ring.index}
+                  isSelected={ring.index === this.state.selected}
+                  lasers={ring.lasers}
+                  blockers={ring.blockers}
+                  rotationOffset={ring.rotationOffset}
+                  isDisabled={ring.isDisabled}
+                />
+              )
           )}
         </svg>
+
+        {hasWon && <StageCompletedDialog />}
 
       </>
     );
