@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import STAGES from "./puzzle/stages";
 
 interface ContextValue {
   currentStage: number | undefined;
   setCurrentStage: (stageIndex: number) => void;
+  goToNextStage: () => void;
   goToTitleScreen: () => void;
   newGame: () => void;
-  nextStage: () => void;
 }
 
 interface GameContextProviderProps {
@@ -26,12 +27,17 @@ function GameContextProvider({ children }: GameContextProviderProps) {
     setCurrentStage(0);
   };
 
-  const nextStage = () => {
+  const goToNextStage = () => {
     setCurrentStage(prevStage => {
-      if (prevStage) {
-        return prevStage + 1;
+      if (prevStage === undefined) {
+        return 0;
       }
-      return 0;
+      const nextStage = prevStage + 1;
+      if (nextStage < STAGES.length) {
+        return nextStage;
+      }
+      // Go back to the title screen if all the stages are complete
+      return undefined;
     });
   };
 
@@ -40,7 +46,7 @@ function GameContextProvider({ children }: GameContextProviderProps) {
     setCurrentStage,
     goToTitleScreen,
     newGame,
-    nextStage
+    goToNextStage
   };
 
   return (

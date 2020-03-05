@@ -1,10 +1,10 @@
 import React from "react";
 import { useGameContext } from "../GameContext";
+import STAGES from "./stages";
 
 function StageCompletedDialog() {
-  const { currentStage, nextStage } = useGameContext();
-  // @ts-ignore
-  const stageDisplayNumber = currentStage + 1;
+  const { currentStage, goToNextStage, goToTitleScreen } = useGameContext();
+  const isFinalStage = currentStage === STAGES.length - 1;
 
   return (
     <div
@@ -34,12 +34,23 @@ function StageCompletedDialog() {
           textAlign: "center"
         }}
       >
-        <h1 style={{ margin: "0 0 48px" }}>
-          Stage {stageDisplayNumber} Complete
-        </h1>
-        <button autoFocus onClick={() => nextStage()}>
-          Continue
-        </button>
+        {isFinalStage ? (
+          <>
+            <h1 style={{ margin: "0 0 48px" }}>All Stages Complete!</h1>
+            <button autoFocus onClick={() => goToTitleScreen()}>
+              Return to Menu
+            </button>
+          </>
+        ) : (
+          <>
+            <h1 style={{ margin: "0 0 48px" }}>
+              Stage {currentStage! + 1} Complete
+            </h1>
+            <button autoFocus onClick={() => goToNextStage()}>
+              Continue
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
