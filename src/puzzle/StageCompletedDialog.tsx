@@ -1,5 +1,6 @@
 import React from "react";
 import { useGameContext } from "../GameContext";
+import Button from "./../button/Button";
 import STAGES from "./stages";
 
 function StageCompletedDialog() {
@@ -19,36 +20,46 @@ function StageCompletedDialog() {
         justifyContent: "center",
         animation: "fadeIn 1s",
         transformOrigin: "center",
-        background: "radial-gradient(#ffffffa8, transparent)",
+        background: "radial-gradient(rgba(255, 255, 255, 0.33), transparent)",
         fontFamily: "Aguda",
         color: "#FFF"
       }}
     >
       <div
         style={{
-          background: "linear-gradient(#173144, #1C4B72)",
-          border: "solid 1px #97BFB7",
+          background: "rgba(0,0,0,.90)",
+          border: "3px solid rgba(255,255,255,0.9)",
           borderRadius: "5px",
           padding: "64px",
           minWidth: "30%",
-          textAlign: "center"
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
         }}
       >
         {isFinalStage ? (
           <>
             <h1 style={{ margin: "0 0 48px" }}>All Stages Complete!</h1>
-            <button autoFocus onClick={() => goToTitleScreen()}>
+            <Button
+              autoFocus
+              onClick={() => goToTitleScreen()}
+              style={{ width: 300 }}
+            >
               Return to Menu
-            </button>
+            </Button>
           </>
         ) : (
           <>
             <h1 style={{ margin: "0 0 48px" }}>
               Stage {currentStage! + 1} Complete
             </h1>
-            <button autoFocus onClick={() => goToNextStage()}>
+            <Button
+              autoFocus
+              onClick={() => goToNextStage()}
+              style={{ width: 300 }}
+            >
               Continue
-            </button>
+            </Button>
           </>
         )}
       </div>
