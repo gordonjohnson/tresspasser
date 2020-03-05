@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import STAGES from "./puzzle/stages";
 
 interface ContextValue {
-  currentStage: number | undefined;
+  currentStage: number | null;
   setCurrentStage: (stageIndex: number) => void;
   goToNextStage: () => void;
   goToTitleScreen: () => void;
@@ -13,14 +13,17 @@ interface GameContextProviderProps {
   children: ReactNode;
 }
 
+interface GameContextConsumerProps {
+  children: (value: ContextValue) => ReactNode;
+}
+
 const GameContext = createContext<ContextValue | undefined>(undefined);
-const GameContextConsumer = GameContext.Consumer;
 
 function GameContextProvider({ children }: GameContextProviderProps) {
-  const [currentStage, setCurrentStage] = useState<number | undefined>();
+  const [currentStage, setCurrentStage] = useState<number | null>(null);
 
   const goToTitleScreen = () => {
-    setCurrentStage(undefined);
+    setCurrentStage(null);
   };
 
   const newGame = () => {
@@ -29,7 +32,7 @@ function GameContextProvider({ children }: GameContextProviderProps) {
 
   const goToNextStage = () => {
     setCurrentStage(prevStage => {
-      if (prevStage === undefined) {
+      if (prevStage === null) {
         return 0;
       }
       const nextStage = prevStage + 1;
@@ -37,11 +40,11 @@ function GameContextProvider({ children }: GameContextProviderProps) {
         return nextStage;
       }
       // Go back to the title screen if all the stages are complete
-      return undefined;
+      return null;
     });
   };
 
-  const contextValue = {
+  const contextValue: ContextValue = {
     currentStage,
     setCurrentStage,
     goToTitleScreen,
@@ -53,6 +56,19 @@ function GameContextProvider({ children }: GameContextProviderProps) {
     <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>
   );
 }
+
+const GameContextConsumer = ({ children }: GameContextConsumerProps) => (
+  <GameContext.Consumer>
+    {contextValue => {
+      if (contextValue === undefined) {
+        throw new Error(
+          "GameContextConsumer must be used within a GameContextProvider"
+        );
+      }
+      return children(contextValue);
+    }}
+  </GameContext.Consumer>
+);
 
 function useGameContext(): ContextValue {
   const contextValue = useContext(GameContext);

@@ -52,7 +52,7 @@ function App() {
       <DebugStageSelector />
       <GameContextConsumer>
         {context => {
-          if (context?.currentStage === undefined) {
+          if (context.currentStage === null) {
             return <MenuScreen />;
           }
           return (
