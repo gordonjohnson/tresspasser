@@ -20,7 +20,8 @@ function DebugStageSelector() {
         float: "right",
         marginRight: 50,
         position: "fixed",
-        fontFamily: "Aguda"
+        fontFamily: "Aguda",
+        zIndex: 1
       }}
     >
       Stage Select{" "}

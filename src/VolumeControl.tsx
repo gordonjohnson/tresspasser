@@ -32,7 +32,8 @@ function VolumeControl() {
         marginRight: 50,
         position: "fixed",
         fontFamily: "Aguda",
-        cursor: "pointer"
+        cursor: "pointer",
+        zIndex: 1
       }}
       onClick={() => setMuted(muted => !muted)}
     >
