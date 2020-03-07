@@ -4,6 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+  perspective: 800px;
 
   .title {
     animation: titleAnimation 1.5s ease-in;

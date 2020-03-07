@@ -1,0 +1,92 @@
+.stageSelect {
+  position: fixed;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  z-index: 1;
+  font-family: "Aguda";
+  color: white;
+  padding: 0 2rem;
+  border-image-source: url("./border.svg");
+  border-image-slice: 0 fill;
+  border-image-repeat: stretch;
+  border-image-outset: 24px;
+  transition: all 0.66s;
+  visibility: hidden;
+  opacity: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(90deg) translateZ(-2000px);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+
+  &.visible {
+    visibility: visible;
+    transform: rotateX(3deg) translateZ(0px);
+    opacity: 1;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    flex-basis: 100%;
+    margin: 2rem 0;
+    opacity: 0.66;
+  }
+
+  .close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 48px;
+    line-height: 1;
+    border: solid 3px currentColor;
+    background: none;
+    color: white;
+    border-radius: 50%;
+    width: 54px;
+    height: 54px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    opacity: 1;
+    cursor: pointer;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: rgb(248, 171, 18);
+    }
+
+    &:active {
+      background-color: rgba(248, 171, 18, 0.4);
+    }
+  }
+
+  .stage {
+    font-family: "Aguda";
+    cursor: pointer;
+    display: inline-flex;
+    flex-direction: column;
+    background: none;
+    color: #fff;
+    border: solid 2px currentColor;
+    border-radius: 16px;
+    margin: 16px;
+    min-height: 128px;
+    min-width: 96px;
+    padding: 8px;
+    font-size: 24px;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: rgb(248, 171, 18);
+    }
+
+    &:active {
+      background-color: rgba(248, 171, 18, 0.4);
+    }
+  }
+}
