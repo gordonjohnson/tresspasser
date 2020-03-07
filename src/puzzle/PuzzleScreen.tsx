@@ -6,7 +6,7 @@ import StageCompletedDialog from "./StageCompletedDialog";
 import STAGES from "./stages";
 import { LaserState, RingState, StageRingLayout } from "./types";
 import { normalize } from "./utils";
-import { PORT_RADIUS, RING_RADIUS } from "./constants";
+import { PORT_RADIUS } from "./constants";
 import * as soundEffects from "./../sounds/soundEffects";
 
 interface PuzzleScreenProps {
@@ -134,7 +134,6 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
   };
 
   calculateObstructions = (ringState: Array<RingState | null>) => {
-
     const ports = new Set(this.currentStage.ports);
 
     const obstructions = ringState.map(ring => {
@@ -330,7 +329,6 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
         </svg>
 
         {hasWon && <StageCompletedDialog />}
-
       </>
     );
   }

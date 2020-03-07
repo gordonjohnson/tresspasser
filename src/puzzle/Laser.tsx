@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { LaserState, Obstructor } from "./types";
 import {
   ORIGIN,
@@ -92,8 +92,8 @@ const RedLaserBeam = (props: LaserProps) => {
           id="whiteToTransparentLinearGradient"
           gradientTransform="rotate(90)"
         >
-          <stop offset="66%" stop-color="white"></stop>
-          <stop offset="100%" stop-color="white" stopOpacity="0"></stop>
+          <stop offset="66%" stopColor="white"></stop>
+          <stop offset="100%" stopColor="white" stopOpacity="0"></stop>
         </linearGradient>
 
         <LaserBeamMask id={id} {...props} />
@@ -107,7 +107,7 @@ const RedLaserBeam = (props: LaserProps) => {
         mask={`url(#${id})`}
       >
         {beams.map(b => (
-          <>
+          <Fragment key={b.name}>
             <filter
               id={`filter-${b.name}-${ringIndex}-${startingPosition}`}
               x="-450%"
@@ -128,7 +128,7 @@ const RedLaserBeam = (props: LaserProps) => {
               fill={b.color}
               filter={`url(#filter-${b.name}-${ringIndex}-${startingPosition})`}
             />
-          </>
+          </Fragment>
         ))}
 
         <filter id="the-core" x="-450%" y="0" width="900%" height="100%">

@@ -34,10 +34,11 @@ function DebugStageSelector() {
           }
         }}
         style={{ fontSize: "inherit" }}
+        value={currentStage ?? undefined}
       >
-        <option selected={currentStage === undefined}>menu</option>
+        <option value={undefined}>menu</option>
         {STAGES.map((s, idx) => (
-          <option key={idx} selected={currentStage === idx}>
+          <option key={idx} value={idx}>
             {idx}
           </option>
         ))}

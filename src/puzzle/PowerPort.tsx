@@ -21,8 +21,8 @@ function PowerPort(props: PowerPortProps) {
         x1="0"
         x2="50%"
       >
-        <stop offset="0%" stop-color="white" stopOpacity="0"></stop>
-        <stop offset="33%" stop-color="white" stopOpacity="0.8"></stop>
+        <stop offset="0%" stopColor="white" stopOpacity="0"></stop>
+        <stop offset="33%" stopColor="white" stopOpacity="0.8"></stop>
       </linearGradient>
 
       <filter id={`bufferGlow`} x="-2.5" y="-2.5" width="5" height="5">
