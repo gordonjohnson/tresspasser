@@ -49,6 +49,14 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     });
   };
 
+  togglePower = () => {
+    this.setState(prevState => {
+      const nextDisabled = [...prevState.disabled];
+      nextDisabled[prevState.selected] = !nextDisabled[prevState.selected];
+      return { disabled: nextDisabled };
+    });
+  };
+
   keyboardListener = (e: KeyboardEvent) => {
     switch (e.key) {
       case "ArrowUp":
@@ -63,6 +71,8 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
       case "ArrowRight":
       case "d":
         return this.rotate(true);
+      case " ":
+        return this.togglePower();
     }
   };
 
@@ -137,8 +147,11 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     const ports = new Set(this.currentStage.ports);
 
     const obstructions = ringState.map(ring => {
-      let lasers = ring?.lasers.map(l => l.currentRotatedPosition) || [];
-      let blockers = ring?.blockers.map(b => b.currentRotatedPosition) || [];
+      if (ring === null || ring.isDisabled) {
+        return new Set();
+      }
+      let lasers = ring.lasers.map(l => l.currentRotatedPosition);
+      let blockers = ring.blockers.map(b => b.currentRotatedPosition);
       return new Set([...lasers, ...blockers]);
     });
 

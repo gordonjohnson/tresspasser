@@ -59,6 +59,7 @@ function Ring(props: RingProps) {
           key={blocker.startingPosition}
           ringIndex={index}
           ringIsSelected={isSelected}
+          ringIsDisabled={isDisabled}
           debug={blocker.currentRotatedPosition}
           {...blocker}
         />

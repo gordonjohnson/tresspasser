@@ -331,9 +331,33 @@ const GreenLaserBeam = (props: LaserProps) => {
 };
 
 const Emitter = (props: LaserProps) => {
-  const { ringIndex, ringIsSelected, isTouchingPort, startingPosition } = props;
+  const {
+    ringIndex,
+    ringIsSelected,
+    ringIsDisabled,
+    isTouchingPort,
+    startingPosition
+  } = props;
   const cx = ORIGIN.x;
   const cy = ORIGIN.y - RING_RADIUS[ringIndex];
+
+  let chevronColor = isTouchingPort ? "#296944" : "#580812";
+  let circleColor;
+  //let circleColor = isTouchingPort ? "#D2EDC6" : "#D6BFBC";
+
+  if (ringIsDisabled && ringIsSelected) {
+    circleColor = "#614202";
+    chevronColor = "#000";
+  } else if (ringIsDisabled) {
+    circleColor = "#B6B6B3";
+    chevronColor = "#4C4C49";
+  } else if (ringIsSelected) {
+    circleColor = "#fff";
+  } else if (isTouchingPort) {
+    circleColor = "#D2EDC6";
+  } else {
+    circleColor = "#D6BFBC";
+  }
 
   const backgroundGlow = (
     <circle
@@ -352,14 +376,15 @@ const Emitter = (props: LaserProps) => {
       cy={cy}
       r={LASER_POINTER_RADIUS}
       strokeWidth={0}
-      fill={ringIsSelected ? "#FFF" : isTouchingPort ? "#D2EDC6" : "#D6BFBC"}
+      fill={circleColor}
+      opacity={ringIsDisabled ? 1 : 0.9}
     />
   );
 
   const arrows = (
     <path
       fill="none"
-      stroke={isTouchingPort ? "#296944" : "#580812"}
+      stroke={chevronColor}
       strokeWidth={4}
       strokeLinecap="round"
       d={`m ${cx - 10},${cy - 10} 10,10 10,-10
@@ -369,7 +394,7 @@ const Emitter = (props: LaserProps) => {
 
   return (
     <g id={`laser-emitter-${ringIndex}-${startingPosition}`}>
-      {backgroundGlow}
+      {ringIsDisabled ? null : backgroundGlow}
       {whiteCircle}
       {arrows}
 
