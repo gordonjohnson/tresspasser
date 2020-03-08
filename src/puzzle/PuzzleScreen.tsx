@@ -155,7 +155,6 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
       return new Set([...lasers, ...blockers]);
     });
 
-    // TODO: factor in disabled rings
     const populateObstructedBy = (laser: LaserState, ringIndex: number) => {
       //see if blocked at the same position by an inner ring
       // check for obstruction in front
@@ -206,7 +205,12 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
   };
 
   calculatePoweredPorts = (ringStates: Array<null | RingState>) => {
-    const lasers = ringStates.flatMap(r => r?.lasers || []);
+    const lasers = ringStates.flatMap(ring => {
+      if (ring === null || ring.isDisabled) {
+        return [];
+      }
+      return ring.lasers;
+    });
     const unblockedLasers = lasers
       .filter(l => l.isTouchingPort)
       .map(l => l.currentBeamTarget);
