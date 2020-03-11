@@ -9,3 +9,5 @@ export const PORT_RADIUS = 337;
 export const BEAM_LENGTH = 1400;
 
 export const LASER_POINTER_RADIUS = 25;
+
+export const ROTATION_TIMING = 100;

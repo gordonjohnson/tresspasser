@@ -2,6 +2,7 @@ import React from "react";
 import { Blocker } from "./Blocker";
 import { Laser } from "./Laser";
 import { BlockerState, LaserState } from "./types";
+import { ROTATION_TIMING } from "./constants";
 
 interface RingProps {
   blockers: Array<BlockerState>;
@@ -28,7 +29,7 @@ function Ring(props: RingProps) {
     <g
       style={{
         transformOrigin: "960px 421.5px",
-        transition: "transform 100ms linear",
+        transition: `transform ${ROTATION_TIMING}ms linear`,
         transform: `rotate(${30 * rotationOffset}deg)`
         // TODO: investigate why will change creates artifacting
         // willChange: "transform"
