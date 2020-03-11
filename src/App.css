@@ -37,7 +37,7 @@ body::before {
   filter: blur(3px);
 }
 
-@keyframes fadeIn {
+@keyframes puzzleEnterAnimation {
   from {
     opacity: 0;
     transform: scale(1.2);

@@ -232,7 +232,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
           style={{
             width: "100vw",
             height: "100vh",
-            animation: "fadeIn 1.6s",
+            animation: "puzzleEnterAnimation 1.6s",
             transition: "all 1s",
             filter: hasWon ? "blur(5px)" : undefined
           }}
