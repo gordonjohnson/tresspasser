@@ -4,13 +4,17 @@ import {
   ORIGIN,
   RING_RADIUS,
   BEAM_LENGTH,
-  LASER_POINTER_RADIUS
+  LASER_POINTER_RADIUS,
+  ROTATION_TIMING
 } from "./constants";
 
-export interface LaserProps extends LaserState {
-  ringIndex: number;
-  ringIsSelected: boolean;
-  ringIsDisabled: boolean;
+interface LaserProps extends LaserState {
+  ring: {
+    index: number;
+    isSelected: boolean;
+    isDisabled: boolean;
+    rotationOffset: number;
+  };
 }
 
 interface LaserBeamMaskProps {
@@ -72,8 +76,8 @@ const LaserBeamMask = (props: LaserBeamMaskProps) => {
 };
 
 const RedLaserBeam = (props: LaserProps) => {
-  const { startingPosition, ringIndex } = props;
-  const id = `beam-${ringIndex}-${startingPosition}`;
+  const { startingPosition, ring } = props;
+  const id = `beam-${ring.index}-${startingPosition}`;
 
   const beams = [
     { name: "outer", width: 32, blur: 48, color: "#F00" },
@@ -83,7 +87,7 @@ const RedLaserBeam = (props: LaserProps) => {
   ];
 
   const x = (beamWidth: number) => ORIGIN.x - 0.5 * beamWidth;
-  const y = ORIGIN.y - RING_RADIUS[ringIndex];
+  const y = ORIGIN.y - RING_RADIUS[ring.index];
 
   return (
     <>
@@ -109,7 +113,7 @@ const RedLaserBeam = (props: LaserProps) => {
         {beams.map(b => (
           <Fragment key={b.name}>
             <filter
-              id={`filter-${b.name}-${ringIndex}-${startingPosition}`}
+              id={`filter-${b.name}-${ring.index}-${startingPosition}`}
               x="-450%"
               y="0"
               width="900%"
@@ -126,7 +130,7 @@ const RedLaserBeam = (props: LaserProps) => {
               width={b.width}
               height={BEAM_LENGTH}
               fill={b.color}
-              filter={`url(#filter-${b.name}-${ringIndex}-${startingPosition})`}
+              filter={`url(#filter-${b.name}-${ring.index}-${startingPosition})`}
             />
           </Fragment>
         ))}
@@ -188,7 +192,7 @@ const RedLaserBeam = (props: LaserProps) => {
 };
 
 const GreenLaserBeam = (props: LaserProps) => {
-  const { startingPosition, ringIndex, ringIsSelected } = props;
+  const { startingPosition, ring } = props;
 
   // const beams = [
   //   { name: "outer", width: 32, blur: 48, color: "#39ff14" },
@@ -198,14 +202,14 @@ const GreenLaserBeam = (props: LaserProps) => {
   // ];
 
   const x = (beamWidth: number) => ORIGIN.x - 0.5 * beamWidth;
-  const y = ORIGIN.y - RING_RADIUS[ringIndex];
+  const y = ORIGIN.y - RING_RADIUS[ring.index];
 
   const coreWidth = 12;
   const coreHeight = 800;
 
   return (
     <g
-      id={`beam-${ringIndex}-${startingPosition}`}
+      id={`beam-${ring.index}-${startingPosition}`}
       mask="url(#portRadiusCutoff)"
       style={{
         animation: "glowAnimation 1.5s infinite",
@@ -215,7 +219,7 @@ const GreenLaserBeam = (props: LaserProps) => {
       <g
         style={{
           transition: "transform 0.5s ease-out",
-          transform: `scaleX(${ringIsSelected ? 1 : 0.66})`,
+          transform: `scaleX(${ring.isSelected ? 1 : 0.66})`,
           transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`
         }}
       >
@@ -233,7 +237,7 @@ const GreenLaserBeam = (props: LaserProps) => {
         </filter>
 
         {/* Outer glow */}
-        {ringIsSelected && (
+        {ring.isSelected && (
           <rect
             x={x(24)}
             y={y}
@@ -301,7 +305,7 @@ const GreenLaserBeam = (props: LaserProps) => {
           </filter>
         </defs>
 
-        {ringIsSelected && (
+        {ring.isSelected && (
           <path
             d={`m ${x(40)},${y} a 20,522 0 0 0 20,522 20,522 0 0 0 20,-522 z`}
             fill="url(#angryGradient2)"
@@ -331,27 +335,21 @@ const GreenLaserBeam = (props: LaserProps) => {
 };
 
 const Emitter = (props: LaserProps) => {
-  const {
-    ringIndex,
-    ringIsSelected,
-    ringIsDisabled,
-    isTouchingPort,
-    startingPosition
-  } = props;
+  const { ring, isTouchingPort, startingPosition } = props;
   const cx = ORIGIN.x;
-  const cy = ORIGIN.y - RING_RADIUS[ringIndex];
+  const cy = ORIGIN.y - RING_RADIUS[ring.index];
 
   let chevronColor = isTouchingPort ? "#296944" : "#580812";
   let circleColor;
   //let circleColor = isTouchingPort ? "#D2EDC6" : "#D6BFBC";
 
-  if (ringIsDisabled && ringIsSelected) {
+  if (ring.isDisabled && ring.isSelected) {
     circleColor = "#614202";
     chevronColor = "#000";
-  } else if (ringIsDisabled) {
+  } else if (ring.isDisabled) {
     circleColor = "#B6B6B3";
     chevronColor = "#4C4C49";
-  } else if (ringIsSelected) {
+  } else if (ring.isSelected) {
     circleColor = "#fff";
   } else if (isTouchingPort) {
     circleColor = "#D2EDC6";
@@ -363,10 +361,10 @@ const Emitter = (props: LaserProps) => {
     <circle
       cx={cx}
       cy={cy}
-      r={ringIsSelected ? LASER_POINTER_RADIUS + 3 : LASER_POINTER_RADIUS}
+      r={ring.isSelected ? LASER_POINTER_RADIUS + 3 : LASER_POINTER_RADIUS}
       fill={isTouchingPort ? "#39FF14" : "#F00"}
       filter={"url(#emitterGlow)"}
-      style={{ mixBlendMode: ringIsSelected ? "screen" : "normal" }}
+      style={{ mixBlendMode: ring.isSelected ? "screen" : "normal" }}
     />
   );
 
@@ -377,7 +375,7 @@ const Emitter = (props: LaserProps) => {
       r={LASER_POINTER_RADIUS}
       strokeWidth={0}
       fill={circleColor}
-      opacity={ringIsDisabled ? 1 : 0.9}
+      opacity={ring.isDisabled ? 1 : 0.9}
     />
   );
 
@@ -393,8 +391,8 @@ const Emitter = (props: LaserProps) => {
   );
 
   return (
-    <g id={`laser-emitter-${ringIndex}-${startingPosition}`}>
-      {ringIsDisabled ? null : backgroundGlow}
+    <g id={`laser-emitter-${ring.index}-${startingPosition}`}>
+      {ring.isDisabled ? null : backgroundGlow}
       {whiteCircle}
       {arrows}
 
@@ -414,15 +412,15 @@ const Emitter = (props: LaserProps) => {
 };
 
 export const Laser = (props: LaserProps) => {
-  const { startingPosition, ringIndex, isTouchingPort, ringIsDisabled } = props;
+  const { startingPosition, ring, isTouchingPort } = props;
 
   // Lasers are drawn vertically at the 12 o'clock position, but are rotated
   // some number of degrees corresponding to their starting position on the ring
-  const rotation = (360 / 12) * startingPosition;
+  const rotation = (360 / 12) * (startingPosition + ring.rotationOffset);
 
   let laserBeam;
 
-  if (ringIsDisabled) {
+  if (ring.isDisabled) {
     laserBeam = null;
   } else if (isTouchingPort) {
     laserBeam = <GreenLaserBeam {...props} />;
@@ -432,8 +430,9 @@ export const Laser = (props: LaserProps) => {
 
   return (
     <g
-      id={`laser-${ringIndex}-${startingPosition}`}
+      id={`laser-${ring.index}-${startingPosition}`}
       transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
+      style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
     >
       {laserBeam}
       <Emitter {...props} />
