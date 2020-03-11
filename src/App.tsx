@@ -16,7 +16,7 @@ function DebugStageSelector() {
     <label
       style={{
         color: "white",
-        fontSize: 24,
+        fontSize: 16,
         float: "right",
         marginRight: 50,
         position: "fixed",
@@ -39,7 +39,7 @@ function DebugStageSelector() {
         <option value={undefined}>menu</option>
         {STAGES.map((s, idx) => (
           <option key={idx} value={idx}>
-            {idx}
+            {idx} - {s.name}
           </option>
         ))}
       </select>
