@@ -13,6 +13,7 @@ function PowerPort(props: PowerPortProps) {
   const fillColor = isPowered ? "#6FFF52" : "#AD0D11";
   const strokeColor = isPowered ? "#DDFFBB" : "#D97140";
 
+  // TODO: extract filters/gradients elsewhere
   return (
     <>
       <linearGradient
@@ -46,7 +47,10 @@ function PowerPort(props: PowerPortProps) {
         </feMerge>
       </filter>
 
-      <g transform={`rotate(${rotation}, ${ORIGIN.x}, ${ORIGIN.y})`}>
+      <g
+        id={`power-port-${position}`}
+        transform={`rotate(${rotation}, ${ORIGIN.x}, ${ORIGIN.y})`}
+      >
         <path
           style={{ transition: "fill 150ms" }}
           fill={fillColor}
