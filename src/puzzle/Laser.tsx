@@ -45,8 +45,7 @@ const RedLaserBeam = (props: LaserProps) => {
 
       <g
         style={{
-          animation: "glowAnimation 1.5s infinite",
-          mixBlendMode: "screen"
+          animation: "glowAnimation 1.5s infinite"
         }}
       >
         {beams.map(b => (
@@ -150,8 +149,7 @@ const GreenLaserBeam = (props: LaserProps) => {
     <g
       id={`beam-${ring.index}-${startingPosition}`}
       style={{
-        animation: "glowAnimation 1.5s infinite",
-        mixBlendMode: "screen"
+        animation: "glowAnimation 1.5s infinite"
       }}
     >
       <g
@@ -495,12 +493,19 @@ export const Laser = (props: LaserProps) => {
   }
 
   return (
-    <g id={`laser-${ring.index}-${startingPosition}`} mask={mask}>
+    <g id={`laser-${ring.index}-${startingPosition}`}>
+      <g mask={mask} style={{ mixBlendMode: "screen" }}>
+        <g
+          transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
+          style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+        >
+          {laserBeam}
+        </g>
+      </g>
       <g
         transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
         style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
       >
-        {laserBeam}
         <Emitter {...props} />
       </g>
       {/* Each laser creates 2 obstruction masks that other lasers may apply */}
