@@ -1,11 +1,12 @@
-import React, { Fragment } from "react";
-import { LaserState, Obstructor } from "./types";
+import React, { Fragment, ReactNode } from "react";
+import { LaserState } from "./types";
 import {
   ORIGIN,
   RING_RADIUS,
   BEAM_LENGTH,
   LASER_POINTER_RADIUS,
-  ROTATION_TIMING
+  ROTATION_TIMING,
+  PORT_RADIUS
 } from "./constants";
 
 interface LaserProps extends LaserState {
@@ -17,67 +18,8 @@ interface LaserProps extends LaserState {
   };
 }
 
-interface LaserBeamMaskProps {
-  id: string;
-  currentRotatedPosition: number;
-  obstructedBy?: Obstructor;
-}
-
-const LaserBeamMask = (props: LaserBeamMaskProps) => {
-  // A <mask> is used to shorten the length of the laser beam when the beam
-  // becomes obstructed
-
-  const { id, currentRotatedPosition, obstructedBy } = props;
-  if (!obstructedBy) {
-    // beam doesn't need to be masked and will extend to the ends of the screen
-    return null;
-  }
-  const radius = RING_RADIUS[obstructedBy.ringIndex];
-
-  // The beam mask varies depending on where the obstruction is in relation
-  // to the beam emitter
-  const obstructedOnSameSide = currentRotatedPosition === obstructedBy.position;
-
-  if (obstructedOnSameSide) {
-    // The beam may not extend *inside* of the ring causing the obstruction
-    return (
-      <mask id={id} maskUnits="userSpaceOnUse">
-        <rect x={0} y={0} width="100%" height="100%" fill="white" />
-        <path
-          strokeWidth={3}
-          fill="black"
-          stroke="black"
-          d={`M ${ORIGIN.x - radius},${ORIGIN.y}
-              a ${radius},${radius} 0 0 1 ${2 * radius},0
-              v ${BEAM_LENGTH}
-              h -${2 * radius}
-              Z`}
-        />
-      </mask>
-    );
-  }
-
-  // The obstruction must be across on the other side of the ring. In that case,
-  // the beam may not extend *outside* of the ring causing the obstruction
-  return (
-    <mask id={id} maskUnits="userSpaceOnUse">
-      <path
-        strokeWidth={3}
-        fill="white"
-        stroke="white"
-        d={`M ${ORIGIN.x - radius},${ORIGIN.y}
-            a ${radius},${radius} 0 0 0 ${2 * radius},0
-            v -${BEAM_LENGTH}
-            h -${2 * radius}
-            Z`}
-      />
-    </mask>
-  );
-};
-
 const RedLaserBeam = (props: LaserProps) => {
   const { startingPosition, ring } = props;
-  const id = `beam-${ring.index}-${startingPosition}`;
 
   const beams = [
     { name: "outer", width: 32, blur: 48, color: "#F00" },
@@ -99,8 +41,6 @@ const RedLaserBeam = (props: LaserProps) => {
           <stop offset="66%" stopColor="white"></stop>
           <stop offset="100%" stopColor="white" stopOpacity="0"></stop>
         </linearGradient>
-
-        <LaserBeamMask id={id} {...props} />
       </defs>
 
       <g
@@ -108,7 +48,6 @@ const RedLaserBeam = (props: LaserProps) => {
           animation: "glowAnimation 1.5s infinite",
           mixBlendMode: "screen"
         }}
-        mask={`url(#${id})`}
       >
         {beams.map(b => (
           <Fragment key={b.name}>
@@ -210,7 +149,6 @@ const GreenLaserBeam = (props: LaserProps) => {
   return (
     <g
       id={`beam-${ring.index}-${startingPosition}`}
-      mask="url(#portRadiusCutoff)"
       style={{
         animation: "glowAnimation 1.5s infinite",
         mixBlendMode: "screen"
@@ -411,15 +349,131 @@ const Emitter = (props: LaserProps) => {
   );
 };
 
-export const Laser = (props: LaserProps) => {
-  const { startingPosition, ring, isTouchingPort } = props;
+const FrontObstructionMask = (props: LaserProps) => {
+  /**
+   * Places a wedge ⌔ behind the current laser emitter that other beams cannot
+   * draw into.
+   *
+   * If the current laser is obstructing another beam from across the opposite
+   * end of the ring, the other beam will apply this mask.
+   *
+   *        ⌔      this mask (hides other beam)
+   *       (▼)     this laser
+   *        ↑
+   *       (△)     other laser
+   *
+   */
 
-  // Lasers are drawn vertically at the 12 o'clock position, but are rotated
-  // some number of degrees corresponding to their starting position on the ring
+  const { startingPosition, ring, currentRotatedPosition } = props;
+  const rotation = (360 / 12) * (startingPosition + ring.rotationOffset);
+  const innerRadius = RING_RADIUS[ring.index];
+  const outerRadius = innerRadius + BEAM_LENGTH;
+  const angle = 45;
+  const toRad = Math.PI / 180;
+  const sine = Math.sin(angle * toRad);
+  const cosine = Math.cos(angle * toRad);
+  const innerDeltaX = innerRadius * sine;
+  const innerDeltaY = innerRadius - innerRadius * cosine;
+  const outerDeltaX = outerRadius * sine;
+
+  return (
+    <mask
+      id={`front-mask-${ring.index}-${currentRotatedPosition}`}
+      maskUnits="userSpaceOnUse"
+    >
+      <rect x="0" y="0" width="100%" height="100%" fill="white" />
+      <g
+        transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
+        style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+      >
+        <circle
+          cx={ORIGIN.x}
+          cy={ORIGIN.y - RING_RADIUS[ring.index]}
+          r={LASER_POINTER_RADIUS}
+          fill="black"
+        />
+        <path
+          strokeWidth={3}
+          fill="black"
+          stroke="black"
+          d={`m ${ORIGIN.x} ${ORIGIN.y - innerRadius}
+             m -${innerDeltaX},${innerDeltaY}
+             a ${innerRadius},${innerRadius} 0 0 1 ${2 * innerDeltaX},0
+             l ${outerDeltaX - innerDeltaX},${innerRadius - outerRadius}
+             a ${outerRadius},${outerRadius} 0 0 0 -${2 * outerDeltaX},0
+             z`}
+        />
+      </g>
+    </mask>
+  );
+};
+
+const BackObstructionMask = (props: LaserProps) => {
+  /**
+   * Places an arc ◠ behind the current laser emitter that other beams may
+   * draw into, but not elsewhere.
+   *
+   * If the current laser is obstructing another beam that is behind it, the
+   * other beam will only be visible within this mask and not outside of it.
+   *
+   *       (▽)    other laser
+   *        ⭣
+   *        ◠     this mask (shows other beam)
+   *       (▼)     this laser
+   *
+   */
+
+  const { startingPosition, ring, currentRotatedPosition } = props;
+  const rotation = (360 / 12) * (startingPosition + ring.rotationOffset);
+  const innerRadius = RING_RADIUS[ring.index];
+  const outerRadius = PORT_RADIUS;
+
+  return (
+    <mask
+      id={`back-mask-${ring.index}-${currentRotatedPosition}`}
+      maskUnits="userSpaceOnUse"
+    >
+      <g
+        transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
+        style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+      >
+        <path
+          strokeWidth={3}
+          fill="white"
+          stroke="white"
+          d={`M ${ORIGIN.x - outerRadius},${ORIGIN.y}
+          a ${outerRadius},${outerRadius} 0 0 1 ${2 * outerRadius},0
+          h -${outerRadius - innerRadius}
+          a ${innerRadius},${innerRadius} 0 0 0 -${2 * innerRadius},0
+          z`}
+        />
+        <circle
+          cx={ORIGIN.x}
+          cy={ORIGIN.y - RING_RADIUS[ring.index]}
+          r={LASER_POINTER_RADIUS}
+          fill="black"
+        />
+      </g>
+    </mask>
+  );
+};
+
+export const Laser = (props: LaserProps) => {
+  const {
+    startingPosition,
+    ring,
+    isTouchingPort,
+    obstructedBy,
+    currentRotatedPosition
+  } = props;
+
+  // Lasers are initially drawn vertically starting at 12 o'clock pointing to
+  // 6 o'clock. They then get rotated some number of degrees into their actual
+  // position via a transform.
   const rotation = (360 / 12) * (startingPosition + ring.rotationOffset);
 
-  let laserBeam;
-
+  // Figure what type of beam to draw
+  let laserBeam: ReactNode;
   if (ring.isDisabled) {
     laserBeam = null;
   } else if (isTouchingPort) {
@@ -428,14 +482,30 @@ export const Laser = (props: LaserProps) => {
     laserBeam = <RedLaserBeam {...props} />;
   }
 
+  // Lasers beams will extend to infinity unless they are obstructed by a power
+  // port, a blocker, or another laser. The obstruction type determines what
+  // masking layer we apply to the beam.
+  let mask: string | undefined;
+  if (isTouchingPort) {
+    mask = "url(#portRadiusCutoff)";
+  } else if (obstructedBy) {
+    const facing =
+      currentRotatedPosition === obstructedBy.position ? "back" : "front";
+    mask = `url(#${facing}-mask-${obstructedBy.ringIndex}-${obstructedBy.position})`;
+  }
+
   return (
-    <g
-      id={`laser-${ring.index}-${startingPosition}`}
-      transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
-      style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
-    >
-      {laserBeam}
-      <Emitter {...props} />
+    <g id={`laser-${ring.index}-${startingPosition}`} mask={mask}>
+      <g
+        transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
+        style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+      >
+        {laserBeam}
+        <Emitter {...props} />
+      </g>
+      {/* Each laser creates 2 obstruction masks that other lasers may apply */}
+      <FrontObstructionMask {...props} />
+      <BackObstructionMask {...props} />
     </g>
   );
 };
