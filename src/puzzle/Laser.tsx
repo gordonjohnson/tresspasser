@@ -366,7 +366,7 @@ const FrontObstructionMask = (props: LaserProps) => {
   const rotation = (360 / 12) * (startingPosition + ring.rotationOffset);
   const innerRadius = RING_RADIUS[ring.index];
   const outerRadius = innerRadius + BEAM_LENGTH;
-  const angle = 45;
+  const angle = 60;
   const toRad = Math.PI / 180;
   const sine = Math.sin(angle * toRad);
   const cosine = Math.cos(angle * toRad);
