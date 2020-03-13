@@ -381,8 +381,11 @@ const FrontObstructionMask = (props: LaserProps) => {
     >
       <rect x="0" y="0" width="100%" height="100%" fill="white" />
       <g
-        transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
-        style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+        style={{
+          transform: `rotate(${rotation}deg)`,
+          transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+          transition: `transform ${ROTATION_TIMING}ms linear`
+        }}
       >
         <circle
           cx={ORIGIN.x}
@@ -432,8 +435,11 @@ const BackObstructionMask = (props: LaserProps) => {
       maskUnits="userSpaceOnUse"
     >
       <g
-        transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
-        style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+        style={{
+          transform: `rotate(${rotation}deg)`,
+          transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+          transition: `transform ${ROTATION_TIMING}ms linear`
+        }}
       >
         <path
           strokeWidth={3}
@@ -496,15 +502,21 @@ export const Laser = (props: LaserProps) => {
     <g id={`laser-${ring.index}-${startingPosition}`}>
       <g mask={mask} style={{ mixBlendMode: "screen" }}>
         <g
-          transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
-          style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+          style={{
+            transform: `rotate(${rotation}deg)`,
+            transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+            transition: `transform ${ROTATION_TIMING}ms linear`
+          }}
         >
           {laserBeam}
         </g>
       </g>
       <g
-        transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
-        style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+        style={{
+          transform: `rotate(${rotation}deg)`,
+          transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+          transition: `transform ${ROTATION_TIMING}ms linear`
+        }}
       >
         <Emitter {...props} />
       </g>

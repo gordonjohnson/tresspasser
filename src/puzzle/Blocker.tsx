@@ -42,8 +42,11 @@ const FrontImpactMask = (props: BlockerProps) => {
     >
       <rect x="0" y="0" width="100%" height="100%" fill="white" />
       <g
-        transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
-        style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+        style={{
+          transform: `rotate(${rotation}deg)`,
+          transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+          transition: `transform ${ROTATION_TIMING}ms linear`
+        }}
       >
         <path
           strokeWidth={3}
@@ -56,7 +59,13 @@ const FrontImpactMask = (props: BlockerProps) => {
              a ${outerRadius},${outerRadius} 0 0 0 -${2 * outerDeltaX},0
              z`}
         />
-        <g transform={`translate(0, ${translation})`}>
+        <g
+          style={{
+            transform: `translateY(${translation}px)`,
+            transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+            transition: `transform ${ROTATION_TIMING}ms linear`
+          }}
+        >
           <rect fill="black" x="928" y="271" width="65" height="11" />
           <path
             fill="black"
