@@ -6,8 +6,8 @@ import StageCompletedDialog from "./StageCompletedDialog";
 import STAGES from "./stages";
 import { LaserState, RingState, StageRingLayout } from "./types";
 import { normalize } from "./utils";
-import { PORT_RADIUS } from "./constants";
 import * as soundEffects from "./../sounds/soundEffects";
+import Defs from "./Defs";
 
 interface PuzzleScreenProps {
   stageIndex: number;
@@ -238,96 +238,9 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
           }}
           preserveAspectRatio="xMidYMid slice"
         >
-          <defs>
-            <mask id="portRadiusCutoff" maskUnits="userSpaceOnUse">
-              <circle cx={960} cy={421.5} r={PORT_RADIUS} fill="white" />
-            </mask>
-            <filter id="selectedRingGlow">
-              <feGaussianBlur result="blur5" stdDeviation={5} />
-              <feGaussianBlur result="blur10" stdDeviation={10} />
-              <feMerge>
-                <feMergeNode in="blur5" />
-                <feMergeNode in="blur5" />
-                <feMergeNode in="blur10" />
-                <feMergeNode in="blur10" />
-                <feMergeNode in="blur10" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <filter id="ringGlow">
-              <feGaussianBlur result="blur5" stdDeviation={5} />
-              <feGaussianBlur result="blur10" stdDeviation={10} />
-              <feMerge>
-                <feMergeNode in="blur5" />
-                <feMergeNode in="blur10" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <filter
-              id="emitterGlow"
-              x="-250%"
-              y="-250%"
-              width="500%"
-              height="500%"
-            >
-              <feGaussianBlur result="blur3" stdDeviation={3} />
-              <feGaussianBlur result="blur5" stdDeviation={5} />
-              <feGaussianBlur result="blur10" stdDeviation={10} />
-              <feMerge>
-                <feMergeNode in="blur5" />
-                <feMergeNode in="blur10" />
-              </feMerge>
-            </filter>
-            <filter
-              id="coreLaserBeamGlow"
-              x="-250%"
-              y="0"
-              width="500%"
-              height="100%"
-            >
-              <feGaussianBlur result="blur1" stdDeviation={1} />
-            </filter>
-            <filter
-              id="middleLaserBeamGlow"
-              x="-250%"
-              y="0"
-              width="500%"
-              height="100%"
-            >
-              <feGaussianBlur result="blur2" stdDeviation={2} />
-            </filter>
-            <filter
-              id="outerLaserBeamGlow"
-              x="-250%"
-              y="0"
-              width="500%"
-              height="100%"
-            >
-              <feGaussianBlur result="blur10" stdDeviation={10} />
-            </filter>
-
-            <radialGradient id="victoryMessageRadialGradient">
-              <stop offset="0%" stopColor="#FFF" stopOpacity={0.66} />
-              <stop offset="100%" stopColor="#FFF" stopOpacity={0} />
-            </radialGradient>
-            <linearGradient
-              id="victoryMessageLinearGradient"
-              gradientTransform="rotate(90)"
-            >
-              <stop offset="0%" stopColor="#173144" stopOpacity={0.97} />
-              <stop offset="100%" stopColor="#1C4B72" stopOpacity={0.97} />
-            </linearGradient>
-          </defs>
+          <Defs />
 
           <ExteriorBorder />
-
-          {this.currentStage.ports.map(position => (
-            <PowerPort
-              key={position}
-              position={position}
-              isPowered={poweredPorts.has(position)}
-            />
-          ))}
 
           {ringStates.map(
             ring =>
@@ -343,6 +256,14 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
                 />
               )
           )}
+
+          {this.currentStage.ports.map(position => (
+            <PowerPort
+              key={position}
+              position={position}
+              isPowered={poweredPorts.has(position)}
+            />
+          ))}
         </svg>
 
         {hasWon && <StageCompletedDialog />}

@@ -3,6 +3,7 @@ import { Blocker } from "./Blocker";
 import { ORIGIN, RING_RADIUS } from "./constants";
 import { Laser } from "./Laser";
 import { RingState } from "./types";
+import { Filter } from "./Defs";
 
 interface RingProps extends RingState {}
 
@@ -20,7 +21,9 @@ function Ring(props: RingProps) {
         cx={ORIGIN.x}
         cy={ORIGIN.y}
         r={RING_RADIUS[index]}
-        filter={isSelected ? "url(#selectedRingGlow)" : "url(#ringGlow)"}
+        filter={`url(#${
+          isSelected ? Filter.SelectedRingGlow : Filter.SoftGlow
+        })`}
         style={{ mixBlendMode: "screen" }}
       />
       {lasers.map(laser => (

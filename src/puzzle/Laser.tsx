@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { LaserState } from "./types";
 import {
   ORIGIN,
@@ -8,6 +8,7 @@ import {
   ROTATION_TIMING,
   PORT_RADIUS
 } from "./constants";
+import { Filter, Mask } from "./Defs";
 
 interface LaserProps extends LaserState {
   ring: {
@@ -18,132 +19,208 @@ interface LaserProps extends LaserState {
   };
 }
 
-const RedLaserBeam = (props: LaserProps) => {
-  const { startingPosition, ring } = props;
+type BeamPart = { href: string; width: number; height: number };
 
-  const beams = [
-    { name: "outer", width: 32, blur: 48, color: "#F00" },
-    { name: "outer2", width: 24, blur: 12, color: "#F00" },
-    { name: "mid", width: 8, blur: 2, color: "#F45C57" }
-    // { name: "core", width: 6, blur: 1, color: "#FFF" }
-  ];
+interface BeamParts {
+  beamOuterGlowStartCap: BeamPart;
+  beamOuterGlow: BeamPart;
+  beamStartCap: BeamPart;
+  beam: BeamPart;
+  emitterGlow: BeamPart;
+  outerFlare: BeamPart;
+  innerFlare: BeamPart;
+  core: BeamPart;
+}
 
-  const x = (beamWidth: number) => ORIGIN.x - 0.5 * beamWidth;
-  const y = ORIGIN.y - RING_RADIUS[ring.index];
-
-  return (
-    <>
-      <defs>
-        <linearGradient
-          id="whiteToTransparentLinearGradient"
-          gradientTransform="rotate(90)"
-        >
-          <stop offset="66%" stopColor="white"></stop>
-          <stop offset="100%" stopColor="white" stopOpacity="0"></stop>
-        </linearGradient>
-      </defs>
-
-      <g
-        style={{
-          animation: "glowAnimation 1.5s infinite"
-        }}
-      >
-        {beams.map(b => (
-          <Fragment key={b.name}>
-            <filter
-              id={`filter-${b.name}-${ring.index}-${startingPosition}`}
-              x="-450%"
-              y="0"
-              width="900%"
-              height="100%"
-            >
-              <feGaussianBlur result="blur" stdDeviation={b.blur} />
-            </filter>
-
-            <rect
-              // x={960 - b.width / 2}
-              // y={274 - translateY}
-              x={x(b.width)}
-              y={y}
-              width={b.width}
-              height={BEAM_LENGTH}
-              fill={b.color}
-              filter={`url(#filter-${b.name}-${ring.index}-${startingPosition})`}
-            />
-          </Fragment>
-        ))}
-
-        <filter id="the-core" x="-450%" y="0" width="900%" height="100%">
-          <feGaussianBlur result="blur" stdDeviation={1} />
-          <feMerge>
-            <feMergeNode in="blur" />
-            {/* <feMergeNode in="SourceGraphic" /> */}
-          </feMerge>
-        </filter>
-
-        {/* <rect
-          id={`core-laser-beam-${ringIndex}-${startingPosition}`}
-          x={960 - 3}
-          y={274 - translateY}
-          width={6}
-          height={beamLength}
-          fill="url(#whiteToTransparentLinearGradient)"
-          filter={"url(#the-core)"}
-          // mask={`url(#mask-laser-beam-${ringIndex}-${startingPosition})`}
-        /> */}
-
-        <filter id={`angry2`} x="-450%" y="0" width="900%" height="100%">
-          <feGaussianBlur result="blur" stdDeviation={4} />
-          <feGaussianBlur result="blur2" stdDeviation={8} />
-          <feGaussianBlur result="blur3" stdDeviation={16} />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="blur2" />
-          </feMerge>
-        </filter>
-        <filter id={`angry3`} x="-450%" y="0" width="900%" height="100%">
-          <feGaussianBlur result="blur2" stdDeviation={2} />
-        </filter>
-
-        {}
-
-        <path
-          d={`m ${x(32)},${y} a 16,422 0 0 0 16,422 16,422 0 0 0 16,-422 z`}
-          fill="#F00"
-          filter={"url(#angry2)"}
-        />
-        <path
-          d={`m ${x(14)},${y} a 7,422 0 0 0 7,422 7,422 0 0 0 7,-422 z`}
-          fill="#F45C57"
-          filter={"url(#angry3)"}
-        />
-
-        <path
-          d={`m ${x(10)},${y} a 5,414 0 0 0 5,414 5,414 0 0 0 5,-414 z`}
-          fill="url(#whiteToTransparentLinearGradient)"
-          // fill="white"
-          filter={"url(#the-core)"}
-        />
-      </g>
-    </>
-  );
+const greenBeamParts = {
+  beamOuterGlowStartCap: {
+    href: require("./assets/green/beam-outer-glow-start-cap.png"),
+    width: 196,
+    height: 169
+  },
+  beamOuterGlow: {
+    href: require("./assets/green/beam-outer-glow.png"),
+    width: 196,
+    height: BEAM_LENGTH
+  },
+  beamStartCap: {
+    href: require("./assets/green/beam-start-cap.png"),
+    width: 72,
+    height: 36
+  },
+  beam: {
+    href: require("./assets/green/beam.png"),
+    width: 72,
+    height: BEAM_LENGTH
+  },
+  emitterGlow: {
+    href: require("./assets/green/emitter-glow.png"),
+    width: 92,
+    height: 92
+  },
+  outerFlare: {
+    href: require("./assets/green/outer-flare.png"),
+    width: 70,
+    height: 677
+  },
+  innerFlare: {
+    href: require("./assets/green/inner-flare.png"),
+    width: 38,
+    height: 700
+  },
+  core: {
+    href: require("./assets/green/bright-core.png"),
+    width: 18,
+    height: 694
+  }
 };
 
-const GreenLaserBeam = (props: LaserProps) => {
+const redBeamParts = {
+  beamOuterGlowStartCap: {
+    href: require("./assets/red/beam-outer-glow-start-cap.png"),
+    width: 301,
+    height: 177
+  },
+  beamOuterGlow: {
+    href: require("./assets/red/beam-outer-glow.png"),
+    width: 301,
+    height: BEAM_LENGTH
+  },
+  beamStartCap: {
+    href: require("./assets/red/beam-start-cap.png"),
+    width: 89,
+    height: 50
+  },
+  beam: {
+    href: require("./assets/red/beam.png"),
+    width: 89,
+    height: BEAM_LENGTH
+  },
+  emitterGlow: {
+    href: require("./assets/red/emitter-glow.png"),
+    width: 112,
+    height: 112
+  },
+  outerFlare: {
+    href: require("./assets/red/outer-flare.png"),
+    width: 82,
+    height: 441
+  },
+  innerFlare: {
+    href: require("./assets/red/inner-flare.png"),
+    width: 24,
+    height: 426
+  },
+  core: {
+    href: require("./assets/red/bright-core.png"),
+    width: 16,
+    height: 413
+  }
+};
+
+const GreenBeam = (props: LaserProps) => beamFormer(greenBeamParts, props);
+const RedBeam = (props: LaserProps) => beamFormer(redBeamParts, props);
+
+const beamFormer = (parts: BeamParts, props: LaserProps) => {
   const { startingPosition, ring } = props;
+  const {
+    beamOuterGlowStartCap,
+    beamOuterGlow,
+    beamStartCap,
+    beam,
+    emitterGlow,
+    outerFlare,
+    innerFlare,
+    core
+  } = parts;
 
-  // const beams = [
-  //   { name: "outer", width: 32, blur: 48, color: "#39ff14" },
-  //   { name: "outer2", width: 24, blur: 12, color: "#39ff14" },
-  //   { name: "mid", width: 8, blur: 2, color: "#ddff99" }
-  //   // { name: "core", width: 6, blur: 1, color: "#FFF" }
-  // ];
+  const yOffset = ORIGIN.y - RING_RADIUS[ring.index];
+  const x = (part: BeamPart) => ORIGIN.x - part.width / 2;
 
-  const x = (beamWidth: number) => ORIGIN.x - 0.5 * beamWidth;
-  const y = ORIGIN.y - RING_RADIUS[ring.index];
+  const beamOuterGlowElement = (
+    <g
+      style={{
+        transition: `opacity 100ms`,
+        opacity: ring.isSelected ? 1 : 0
+      }}
+    >
+      <image
+        {...beamOuterGlowStartCap}
+        x={x(beamOuterGlowStartCap)}
+        y={yOffset - beamOuterGlowStartCap.height / 2}
+      />
+      <image
+        {...beamOuterGlow}
+        x={x(beamOuterGlow)}
+        y={yOffset + beamOuterGlowStartCap.height / 2}
+        preserveAspectRatio="none"
+      />
+    </g>
+  );
 
-  const coreWidth = 12;
-  const coreHeight = 800;
+  const beamElement = (
+    <g
+      style={{
+        transition: `transform 100ms opacity 100ms`,
+        transform: ring.isSelected ? "scaleX(1)" : "scaleX(0.6)",
+        opacity: ring.isSelected ? 1 : 0.8,
+        transformOrigin: ORIGIN.x
+      }}
+    >
+      <image
+        {...beamStartCap}
+        x={x(beamStartCap)}
+        y={yOffset - beamStartCap.height / 2}
+      />
+      <image
+        {...beam}
+        x={x(beam)}
+        y={yOffset + beamStartCap.height / 2}
+        preserveAspectRatio="none"
+      />
+    </g>
+  );
+
+  const emitterGlowElement = (
+    <image
+      {...emitterGlow}
+      x={x(emitterGlow)}
+      y={yOffset - emitterGlow.height / 2}
+      style={{
+        transition: `transform 100ms`,
+        transform: ring.isSelected ? "scale(1)" : "scale(.85)",
+        transformOrigin: `${ORIGIN.x}px ${yOffset}px`
+      }}
+    />
+  );
+
+  const outerFlareElement = (
+    <image
+      {...outerFlare}
+      x={x(outerFlare)}
+      y={yOffset}
+      style={{
+        transition: `opacity 100ms`,
+        opacity: ring.isSelected ? 1 : 0.7
+      }}
+    />
+  );
+
+  const innerFlareElement = (
+    <image {...innerFlare} x={x(innerFlare)} y={yOffset} />
+  );
+
+  const coreElement = (
+    <image
+      {...core}
+      x={x(core)}
+      y={yOffset}
+      style={{
+        transition: `opacity 100ms`,
+        opacity: ring.isSelected ? 1 : 0.8
+      }}
+    />
+  );
 
   return (
     <g
@@ -152,119 +229,19 @@ const GreenLaserBeam = (props: LaserProps) => {
         animation: "glowAnimation 1.5s infinite"
       }}
     >
+      {emitterGlowElement}
       <g
         style={{
-          transition: "transform 0.5s ease-out",
-          transform: `scaleX(${ring.isSelected ? 1 : 0.66})`,
-          transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`
+          transition: `transform 100ms`,
+          transform: ring.isSelected ? "scaleX(1)" : "scaleX(.65)",
+          transformOrigin: ORIGIN.x
         }}
       >
-        <filter id={`blur1`} x="-450%" y="0" width="900%" height="100%">
-          <feGaussianBlur result="blur" stdDeviation={1} />
-        </filter>
-        <filter id={`blur2`} x="-450%" y="0" width="900%" height="100%">
-          <feGaussianBlur result="blur" stdDeviation={2} />
-        </filter>
-        <filter id={`blur12`} x="-450%" y="0" width="900%" height="100%">
-          <feGaussianBlur result="blur" stdDeviation={12} />
-        </filter>
-        <filter id={`blur32`} x="-4.5" y="0" width="10" height="1">
-          <feGaussianBlur result="blur" stdDeviation={32} />
-        </filter>
-
-        {/* Outer glow */}
-        {ring.isSelected && (
-          <rect
-            x={x(24)}
-            y={y}
-            width={24}
-            height={BEAM_LENGTH}
-            fill={"#39ff14"}
-            filter={"url(#blur32)"}
-          />
-        )}
-
-        <rect
-          x={x(24)}
-          y={y}
-          width={24}
-          height={BEAM_LENGTH}
-          fill={"#39ff14"}
-          filter={"url(#blur12)"}
-        />
-
-        <rect
-          x={x(18)}
-          y={y}
-          width={18}
-          height={BEAM_LENGTH}
-          fill={"#A1FF4E"}
-          filter={"url(#blur2)"}
-        />
-
-        <defs>
-          <linearGradient id="coreGradient" gradientTransform="rotate(90)">
-            <stop offset="66%" stopColor="white" stopOpacity=".9"></stop>
-            <stop offset="100%" stopColor="white" stopOpacity="0"></stop>
-          </linearGradient>
-          <linearGradient id="angryGradient2" gradientTransform="rotate(90)">
-            <stop offset="66%" stopColor="#39ff14" stopOpacity=".9"></stop>
-            <stop offset="100%" stopColor="#F7FF7F" stopOpacity="0"></stop>
-          </linearGradient>
-          <linearGradient id="angryGradient3" gradientTransform="rotate(90)">
-            <stop offset="66%" stopColor="#39ff14" stopOpacity=".9"></stop>
-            <stop offset="100%" stopColor="#F7FF7F" stopOpacity="0"></stop>
-          </linearGradient>
-          <linearGradient id="yellowGrad" gradientTransform="rotate(90)">
-            <stop offset="66%" stopColor="#F7FF7F" stopOpacity="1"></stop>
-            <stop offset="100%" stopColor="#F7FF7F" stopOpacity="0"></stop>
-          </linearGradient>
-
-          <filter id={`green-angry2`} x="-4.5" y="0" width="10" height="2">
-            <feGaussianBlur result="blur" stdDeviation={4} />
-            <feGaussianBlur result="blur2" stdDeviation={8} />
-            {/* <feGaussianBlur result="blur3" stdDeviation={16} />
-
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="blur2" />
-          </feMerge> */}
-          </filter>
-          <filter
-            id={`green-angry3`}
-            x="-450%"
-            y="0"
-            width="900%"
-            height="100%"
-          >
-            <feGaussianBlur result="blur3" stdDeviation={3} />
-          </filter>
-        </defs>
-
-        {ring.isSelected && (
-          <path
-            d={`m ${x(40)},${y} a 20,522 0 0 0 20,522 20,522 0 0 0 20,-522 z`}
-            fill="url(#angryGradient2)"
-            filter={"url(#green-angry2)"}
-          />
-        )}
-        <path
-          d={`m ${x(28)},${y} a 14,522 0 0 0 14,522 14,522 0 0 0 14,-522 z`}
-          fill="url(#angryGradient3)"
-          filter={"url(#green-angry3)"}
-        />
-
-        <path
-          d={`m ${x(coreWidth)},${y}
-            a ${coreWidth / 2},${coreHeight} 0 0 0 ${coreWidth /
-            2},${coreHeight}
-            ${coreWidth / 2},${coreHeight} 0 0 0 ${coreWidth /
-            2},-${coreHeight} z`}
-          stroke="url(#yellowGrad)"
-          strokeWidth={3}
-          fill="url(#coreGradient)"
-          filter={"url(#blur1)"}
-        />
+        {beamOuterGlowElement}
+        {beamElement}
+        {outerFlareElement}
+        {innerFlareElement}
+        {coreElement}
       </g>
     </g>
   );
@@ -276,8 +253,7 @@ const Emitter = (props: LaserProps) => {
   const cy = ORIGIN.y - RING_RADIUS[ring.index];
 
   let chevronColor = isTouchingPort ? "#296944" : "#580812";
-  let circleColor;
-  //let circleColor = isTouchingPort ? "#D2EDC6" : "#D6BFBC";
+  let circleColor: string;
 
   if (ring.isDisabled && ring.isSelected) {
     circleColor = "#614202";
@@ -293,18 +269,7 @@ const Emitter = (props: LaserProps) => {
     circleColor = "#D6BFBC";
   }
 
-  const backgroundGlow = (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={ring.isSelected ? LASER_POINTER_RADIUS + 3 : LASER_POINTER_RADIUS}
-      fill={isTouchingPort ? "#39FF14" : "#F00"}
-      filter={"url(#emitterGlow)"}
-      style={{ mixBlendMode: ring.isSelected ? "screen" : "normal" }}
-    />
-  );
-
-  const whiteCircle = (
+  const circle = (
     <circle
       cx={cx}
       cy={cy}
@@ -312,10 +277,15 @@ const Emitter = (props: LaserProps) => {
       strokeWidth={0}
       fill={circleColor}
       opacity={ring.isDisabled ? 1 : 0.9}
+      filter={
+        ring.isSelected && !ring.isDisabled
+          ? `url(#${Filter.SoftGlow})`
+          : undefined
+      }
     />
   );
 
-  const arrows = (
+  const chevron = (
     <path
       fill="none"
       stroke={chevronColor}
@@ -328,10 +298,8 @@ const Emitter = (props: LaserProps) => {
 
   return (
     <g id={`laser-emitter-${ring.index}-${startingPosition}`}>
-      {ring.isDisabled ? null : backgroundGlow}
-      {whiteCircle}
-      {arrows}
-
+      {circle}
+      {chevron}
       {/* <text
         x={cx}
         y={cy}
@@ -475,15 +443,20 @@ export const Laser = (props: LaserProps) => {
   // 6 o'clock. They then get rotated some number of degrees into their actual
   // position via a transform.
   const rotation = (360 / 12) * (startingPosition + ring.rotationOffset);
+  const rotationStyle = {
+    transform: `rotate(${rotation}deg)`,
+    transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+    transition: `transform ${ROTATION_TIMING}ms linear`
+  };
 
   // Figure what type of beam to draw
   let laserBeam: ReactNode;
   if (ring.isDisabled) {
     laserBeam = null;
   } else if (isTouchingPort) {
-    laserBeam = <GreenLaserBeam {...props} />;
+    laserBeam = <GreenBeam {...props} />;
   } else {
-    laserBeam = <RedLaserBeam {...props} />;
+    laserBeam = <RedBeam {...props} />;
   }
 
   // Lasers beams will extend to infinity unless they are obstructed by a power
@@ -491,7 +464,7 @@ export const Laser = (props: LaserProps) => {
   // masking layer we apply to the beam.
   let mask: string | undefined;
   if (isTouchingPort) {
-    mask = "url(#portRadiusCutoff)";
+    mask = `url(#${Mask.PortRadiusCutoff})`;
   } else if (obstructedBy) {
     const facing =
       currentRotatedPosition === obstructedBy.position ? "back" : "front";
@@ -501,23 +474,9 @@ export const Laser = (props: LaserProps) => {
   return (
     <g id={`laser-${ring.index}-${startingPosition}`}>
       <g mask={mask} style={{ mixBlendMode: "screen" }}>
-        <g
-          style={{
-            transform: `rotate(${rotation}deg)`,
-            transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
-            transition: `transform ${ROTATION_TIMING}ms linear`
-          }}
-        >
-          {laserBeam}
-        </g>
+        <g style={rotationStyle}>{laserBeam}</g>
       </g>
-      <g
-        style={{
-          transform: `rotate(${rotation}deg)`,
-          transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
-          transition: `transform ${ROTATION_TIMING}ms linear`
-        }}
-      >
+      <g style={rotationStyle}>
         <Emitter {...props} />
       </g>
       {/* Each laser creates 2 obstruction masks that other lasers may apply */}
