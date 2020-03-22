@@ -19,6 +19,8 @@ function StageCompletedDialog() {
         alignItems: "center",
         justifyContent: "center",
         animation: "fadeIn 1s",
+        animationDelay: "600ms",
+        animationFillMode: "both",
         transformOrigin: "center",
         background: "radial-gradient(rgba(255, 255, 255, 0.33), transparent)",
         fontFamily: "Aguda",
