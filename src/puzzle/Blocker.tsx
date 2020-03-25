@@ -120,7 +120,7 @@ export function Blocker(props: BlockerProps) {
   const rotation = (360 / 12) * (startingPosition + ring.rotationOffset);
   const translation = -49 * ring.index;
   return (
-    <g id={`blocker-${ring.index}-${startingPosition}`}>
+    <g id={`blocker-${ring.index}-${startingPosition}`} pointerEvents="none">
       <g
         style={{
           transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,

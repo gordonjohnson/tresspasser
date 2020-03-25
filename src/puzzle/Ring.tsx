@@ -5,7 +5,9 @@ import { Laser } from "./Laser";
 import { RingState } from "./types";
 import { Filter } from "./Defs";
 
-interface RingProps extends RingState {}
+interface RingProps extends RingState {
+  onClick: (index: number) => void;
+}
 
 function Ring(props: RingProps) {
   const { lasers = [], blockers = [], ...ring } = props;
@@ -13,6 +15,17 @@ function Ring(props: RingProps) {
 
   return (
     <g id={`ring-${index}`}>
+      <circle
+        id={`ring-${index}-hit-box`}
+        style={{ cursor: "pointer" }}
+        onMouseDown={() => props.onClick(index)}
+        fill="none"
+        stroke={"transparent"}
+        strokeWidth={48}
+        cx={ORIGIN.x}
+        cy={ORIGIN.y}
+        r={RING_RADIUS[index]}
+      />
       <circle
         fill="none"
         stroke={isSelected ? "rgb(248, 171, 18)" : "rgba(255,255,255,0.66)"}
@@ -25,6 +38,7 @@ function Ring(props: RingProps) {
           isSelected ? Filter.SelectedRingGlow : Filter.SoftGlow
         })`}
         style={{ mixBlendMode: "screen" }}
+        pointerEvents="none"
       />
       {lasers.map(laser => (
         <Laser key={laser.startingPosition} ring={ring} {...laser} />

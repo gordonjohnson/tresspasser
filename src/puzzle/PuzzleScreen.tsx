@@ -37,7 +37,11 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     });
   };
 
-  select = (isOutward: boolean) => {
+  selectRing = (index: number) => {
+    this.setState({ selected: index });
+  };
+
+  selectAdjacentRing = (isOutward: boolean) => {
     this.setState(prevState => {
       let nextSelected = prevState.selected + (isOutward ? 1 : -1);
       if (!this.currentStage.rings[nextSelected]) {
@@ -61,10 +65,10 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     switch (e.key) {
       case "ArrowUp":
       case "w":
-        return this.select(true);
+        return this.selectAdjacentRing(true);
       case "ArrowDown":
       case "s":
-        return this.select(false);
+        return this.selectAdjacentRing(false);
       case "ArrowLeft":
       case "a":
         return this.rotate(false);
@@ -251,6 +255,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
                   blockers={ring.blockers}
                   rotationOffset={ring.rotationOffset}
                   isDisabled={ring.isDisabled}
+                  onClick={this.selectRing}
                 />
               )
           )}

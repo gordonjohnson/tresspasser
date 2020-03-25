@@ -18,6 +18,7 @@ function PowerPort(props: PowerPortProps) {
     <g
       id={`power-port-${position}`}
       transform={`rotate(${rotation}, ${ORIGIN.x}, ${ORIGIN.y})`}
+      pointerEvents="none"
     >
       <path
         filter={`url(#${Filter.PowerPortGlow})`}

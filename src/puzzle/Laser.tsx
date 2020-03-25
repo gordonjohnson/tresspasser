@@ -472,7 +472,7 @@ export const Laser = (props: LaserProps) => {
   }
 
   return (
-    <g id={`laser-${ring.index}-${startingPosition}`}>
+    <g id={`laser-${ring.index}-${startingPosition}`} pointerEvents="none">
       <g mask={mask} style={{ mixBlendMode: "screen" }}>
         <g style={rotationStyle}>{laserBeam}</g>
       </g>
