@@ -79,8 +79,6 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
   componentDidMount() {
     document.addEventListener("keydown", this.keyboardListener);
     soundEffects.startStage.play();
-    soundEffects.electricalHum.play();
-    soundEffects.backgroundMusic.play();
   }
 
   componentWillUnmount() {
