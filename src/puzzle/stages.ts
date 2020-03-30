@@ -8,17 +8,6 @@ import { StageLayout } from "./types";
 
 const STAGES: ReadonlyArray<StageLayout> = [
   {
-    name: "DEBUG",
-    difficulty: "Easy",
-    ports: [0, 6],
-    rings: [
-      null,
-      null,
-      { lasers: [3], blockers: [6] },
-      { lasers: [0], blockers: [] }
-    ]
-  },
-  {
     name: "remake #1 rilgar 0:23",
     difficulty: "Easy",
     ports: [2, 9],
@@ -29,30 +18,6 @@ const STAGES: ReadonlyArray<StageLayout> = [
       null
     ]
   },
-
-  {
-    name: "remake #2 kerwan 1:00",
-    difficulty: "Easy",
-    ports: [4, 6, 7, 9],
-    rings: [
-      null,
-      { lasers: [7, 10], blockers: [9] },
-      { lasers: [2, 4, 7], blockers: [] },
-      null
-    ]
-  },
-  {
-    name: "remake #2 kerwan 0:00",
-    difficulty: "Hard",
-    ports: [4, 6, 7, 9],
-    rings: [
-      null,
-      { lasers: [6, 9], blockers: [], disabled: true },
-      { lasers: [6, 7], blockers: [8], disabled: true },
-      { lasers: [4], blockers: [3, 5] }
-    ]
-  },
-
   {
     name: "remake #3 nebula g34 1:31",
     difficulty: "Easy",
@@ -64,7 +29,17 @@ const STAGES: ReadonlyArray<StageLayout> = [
       null
     ]
   },
-
+  {
+    name: "remake #5 Nebula G34 2:27",
+    difficulty: "Easy",
+    ports: [1, 2, 4, 6],
+    rings: [
+      null,
+      { lasers: [10, 11], blockers: [] },
+      { lasers: [5, 7], blockers: [] },
+      null
+    ]
+  },
   {
     name: "remake #4 Nebula G34 1:56",
     difficulty: "Easy",
@@ -77,14 +52,36 @@ const STAGES: ReadonlyArray<StageLayout> = [
     ]
   },
   {
-    name: "remake #5 Nebula G34 2:27",
+    name: "remake #12 Pokitaru 7:04",
     difficulty: "Easy",
-    ports: [1, 2, 4, 6],
+    ports: [0, 1, 2, 10, 11],
     rings: [
       null,
-      { lasers: [10, 11], blockers: [] },
-      { lasers: [5, 7], blockers: [] },
+      { lasers: [7, 9], blockers: [], disabled: true },
+      { lasers: [1, 5], blockers: [], disabled: true },
+      { lasers: [11], blockers: [] }
+    ]
+  },
+  {
+    name: "remake #2 kerwan 1:00",
+    difficulty: "Easy",
+    ports: [4, 6, 7, 9],
+    rings: [
+      null,
+      { lasers: [7, 10], blockers: [9] },
+      { lasers: [2, 4, 7], blockers: [] },
       null
+    ]
+  },
+  {
+    name: "remake #11 Pokitaru 6:22",
+    difficulty: "Easy",
+    ports: [3, 5, 6, 7],
+    rings: [
+      null,
+      { lasers: [9, 11], blockers: [], disabled: true },
+      { lasers: [0], blockers: [5, 7], disabled: true },
+      { lasers: [7], blockers: [] }
     ]
   },
   {
@@ -107,6 +104,18 @@ const STAGES: ReadonlyArray<StageLayout> = [
       { lasers: [4, 6], blockers: [11] },
       { lasers: [1, 8], blockers: [3, 5] },
       { lasers: [1], blockers: [8] }
+    ]
+  },
+
+  {
+    name: "remake #2 kerwan 0:00",
+    difficulty: "Hard",
+    ports: [4, 6, 7, 9],
+    rings: [
+      null,
+      { lasers: [6, 9], blockers: [], disabled: true },
+      { lasers: [6, 7], blockers: [8], disabled: true },
+      { lasers: [4], blockers: [3, 5] }
     ]
   },
   // LEVELS AFTER THIS POINT REQUIRE TOGGLE RING POWER
@@ -187,28 +196,7 @@ const STAGES: ReadonlyArray<StageLayout> = [
       { lasers: [7, 11], blockers: [8, 9, 10] }
     ]
   },
-  {
-    name: "remake #11 Pokitaru 6:22",
-    difficulty: "Easy",
-    ports: [3, 5, 6, 7],
-    rings: [
-      null,
-      { lasers: [9, 11], blockers: [], disabled: true },
-      { lasers: [0], blockers: [5, 7], disabled: true },
-      { lasers: [7], blockers: [] }
-    ]
-  },
-  {
-    name: "remake #12 Pokitaru 7:04",
-    difficulty: "Easy",
-    ports: [0, 1, 2, 10, 11],
-    rings: [
-      null,
-      { lasers: [7, 9], blockers: [], disabled: true },
-      { lasers: [1, 5], blockers: [], disabled: true },
-      { lasers: [11], blockers: [] }
-    ]
-  },
+
   {
     name: "remake #12 HARD Pokitaru 2/2 2:14",
     difficulty: "Hard",
@@ -295,6 +283,17 @@ const STAGES: ReadonlyArray<StageLayout> = [
       { lasers: [10], blockers: [1, 7], disabled: true },
       { lasers: [9, 11], blockers: [0], disabled: true },
       { lasers: [3, 5], blockers: [1, 6] }
+    ]
+  },
+  {
+    name: "DEBUG",
+    difficulty: "Easy",
+    ports: [6, 5],
+    rings: [
+      { lasers: [], blockers: [] },
+      { lasers: [], blockers: [] },
+      { lasers: [], blockers: [] },
+      { lasers: [0], blockers: [] }
     ]
   }
 
