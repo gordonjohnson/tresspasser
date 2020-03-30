@@ -23,6 +23,10 @@ body {
   height: 100vh; */
 }
 
+body.paused {
+  filter: blur(3px) grayscale(1);
+}
+
 body::before {
   content: "";
   position: absolute;

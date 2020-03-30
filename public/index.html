@@ -46,6 +46,18 @@
           url("fonts/agudaregular.woff") format("woff");
       }
     </style>
+    <script>
+      function pause() {
+        document.body.classList.add("paused");
+      }
+
+      function play() {
+        document.body.classList.remove("paused");
+      }
+
+      window.addEventListener("blur", pause);
+      window.addEventListener("focus", play);
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
