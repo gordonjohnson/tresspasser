@@ -6,19 +6,22 @@ import { RingState } from "./types";
 import { Filter } from "./Defs";
 
 interface RingProps extends RingState {
-  onClick: (index: number) => void;
+  onMouseDown: (
+    event: React.MouseEvent<SVGCircleElement, MouseEvent>,
+    ringIndex: number
+  ) => void;
 }
 
 function Ring(props: RingProps) {
-  const { lasers = [], blockers = [], ...ring } = props;
+  const { lasers = [], blockers = [], onMouseDown, ...ring } = props;
   const { index, isSelected = false, isDisabled = false } = ring;
 
   return (
     <g id={`ring-${index}`}>
       <circle
         id={`ring-${index}-hit-box`}
-        style={{ cursor: "pointer" }}
-        onMouseDown={() => props.onClick(index)}
+        style={{ cursor: isSelected ? "move" : "pointer" }}
+        onMouseDown={e => onMouseDown(e, index)}
         fill="none"
         stroke={"transparent"}
         strokeWidth={48}

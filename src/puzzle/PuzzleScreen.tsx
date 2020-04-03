@@ -9,6 +9,35 @@ import { normalize } from "./utils";
 import * as soundEffects from "./../sounds/soundEffects";
 import Defs from "./Defs";
 
+const throttle = (callback: any, delay: number) => {
+  let throttleTimeout: NodeJS.Timeout | null = null;
+  let storedEvent: any = null;
+
+  const throttledEventHandler = (event: any) => {
+    storedEvent = event;
+
+    const shouldHandleEvent = !throttleTimeout;
+
+    if (shouldHandleEvent) {
+      callback(storedEvent);
+
+      storedEvent = null;
+
+      throttleTimeout = setTimeout(() => {
+        throttleTimeout = null;
+
+        if (storedEvent) {
+          throttledEventHandler(storedEvent);
+        }
+      }, delay);
+    }
+  };
+
+  return throttledEventHandler;
+};
+
+const logThrottled = throttle(console.table, 300);
+
 interface PuzzleScreenProps {
   stageIndex: number;
 }
@@ -17,14 +46,19 @@ interface PuzzleScreenState {
   selected: number;
   rotation: Array<number>;
   disabled: Array<boolean>;
+  dragInfo: null | {
+    startingClickPoint: { x: number; y: number };
+    startingRingPosition: number;
+  };
 }
 
 class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
   currentStage = STAGES[this.props.stageIndex];
-  state = {
+  state: PuzzleScreenState = {
     selected: this.currentStage.rings.map(Boolean).lastIndexOf(true),
     rotation: [0, 0, 0, 0],
-    disabled: [false, false, false, false]
+    disabled: [false, false, false, false],
+    dragInfo: null
   };
 
   rotate = (isClockwise: boolean) => {
@@ -37,8 +71,65 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     });
   };
 
-  selectRing = (index: number) => {
-    this.setState({ selected: index });
+  handleRingMouseDown = (
+    event: React.MouseEvent<SVGCircleElement, MouseEvent>,
+    ringIndex: number
+  ) => {
+    const { pageX, pageY } = event;
+    this.setState(prevState => ({
+      selected: ringIndex,
+      dragInfo: {
+        startingClickPoint: { x: pageX, y: pageY },
+        startingRingPosition: prevState.rotation[ringIndex]
+      }
+    }));
+  };
+
+  handleMouseMove = (event: any) => {
+    if (this.state.dragInfo === null) return;
+
+    const center = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2
+    };
+
+    const startX = this.state.dragInfo.startingClickPoint.x - center.x;
+    const startY = this.state.dragInfo.startingClickPoint.y - center.y;
+    const currentX = event.pageX - center.x;
+    const currentY = event.pageY - center.y;
+
+    // Angle between the start point and the center
+    const startAngle = (Math.atan2(startY, startX) * 180) / Math.PI;
+    // Angle between the current point and center
+    const currentAngle = (Math.atan2(currentY, currentX) * 180) / Math.PI;
+    let deltaAngle = currentAngle - startAngle;
+
+    const rounded = Math.round(deltaAngle / 30);
+
+    logThrottled({
+      start: { x: startX, y: startY, angle: Math.round(startAngle) },
+      current: { x: currentX, y: currentY, angle: Math.round(currentAngle) },
+      delta: { angle: deltaAngle }
+    });
+
+    this.setState(prevState => {
+      if (
+        prevState.dragInfo!.startingRingPosition + rounded !==
+        prevState.rotation[prevState.selected]
+      ) {
+        const nextRotation = [...prevState.rotation];
+        nextRotation[prevState.selected] =
+          prevState.dragInfo!.startingRingPosition + rounded;
+        return {
+          rotation: nextRotation
+        };
+      }
+      return null;
+    });
+  };
+
+  handleMouseUp = (event: any) => {
+    this.setState({ dragInfo: null });
   };
 
   selectAdjacentRing = (isOutward: boolean) => {
@@ -82,11 +173,15 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
 
   componentDidMount() {
     document.addEventListener("keydown", this.keyboardListener);
+    // document.addEventListener("mousemove", this.handleMouseMove);
+    document.addEventListener("mouseup", this.handleMouseUp);
     soundEffects.startStage.play();
   }
 
   componentWillUnmount() {
     document.removeEventListener("keydown", this.keyboardListener);
+    // document.removeEventListener("mousemove", this.handleMouseMove);
+    document.removeEventListener("mouseup", this.handleMouseUp);
   }
 
   componentDidUpdate(prevProps: PuzzleScreenProps, prevState: any) {
@@ -236,9 +331,11 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
             height: "100vh",
             animation: "puzzleEnterAnimation 1.6s",
             transition: "all 1s",
-            filter: hasWon ? "blur(5px)" : undefined
+            filter: hasWon ? "blur(5px)" : undefined,
+            cursor: this.state.dragInfo ? "move" : undefined
           }}
           preserveAspectRatio="xMidYMid slice"
+          onMouseMove={this.handleMouseMove}
         >
           <Defs />
 
@@ -255,7 +352,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
                   blockers={ring.blockers}
                   rotationOffset={ring.rotationOffset}
                   isDisabled={ring.isDisabled}
-                  onClick={this.selectRing}
+                  onMouseDown={this.handleRingMouseDown}
                 />
               )
           )}
