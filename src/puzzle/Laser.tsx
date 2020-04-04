@@ -15,6 +15,7 @@ interface LaserProps extends LaserState {
     index: number;
     isSelected: boolean;
     isDisabled: boolean;
+    isBeingDragged: boolean;
     rotationOffset: number;
   };
 }
@@ -352,7 +353,9 @@ const FrontObstructionMask = (props: LaserProps) => {
         style={{
           transform: `rotate(${rotation}deg)`,
           transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
-          transition: `transform ${ROTATION_TIMING}ms linear`
+          transition: ring.isBeingDragged
+            ? undefined
+            : `transform ${ROTATION_TIMING}ms linear`
         }}
       >
         <circle
@@ -406,7 +409,9 @@ const BackObstructionMask = (props: LaserProps) => {
         style={{
           transform: `rotate(${rotation}deg)`,
           transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
-          transition: `transform ${ROTATION_TIMING}ms linear`
+          transition: ring.isBeingDragged
+            ? undefined
+            : `transform ${ROTATION_TIMING}ms linear`
         }}
       >
         <path
@@ -446,7 +451,9 @@ export const Laser = (props: LaserProps) => {
   const rotationStyle = {
     transform: `rotate(${rotation}deg)`,
     transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
-    transition: `transform ${ROTATION_TIMING}ms linear`
+    transition: ring.isBeingDragged
+      ? undefined
+      : `transform ${ROTATION_TIMING}ms linear`
   };
 
   // Figure what type of beam to draw

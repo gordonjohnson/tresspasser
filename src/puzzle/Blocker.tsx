@@ -13,6 +13,7 @@ interface BlockerProps extends BlockerState {
     index: number;
     isSelected: boolean;
     isDisabled: boolean;
+    isBeingDragged: boolean;
     rotationOffset: number;
   };
 }
@@ -45,7 +46,9 @@ const FrontImpactMask = (props: BlockerProps) => {
         style={{
           transform: `rotate(${rotation}deg)`,
           transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
-          transition: `transform ${ROTATION_TIMING}ms linear`
+          transition: ring.isBeingDragged
+            ? undefined
+            : `transform ${ROTATION_TIMING}ms linear`
         }}
       >
         <path
@@ -98,7 +101,11 @@ const BackImpactMask = (props: BlockerProps) => {
     >
       <g
         transform={`rotate(${rotation} ${ORIGIN.x},${ORIGIN.y})`}
-        style={{ transition: `transform ${ROTATION_TIMING}ms linear` }}
+        style={{
+          transition: ring.isBeingDragged
+            ? undefined
+            : `transform ${ROTATION_TIMING}ms linear`
+        }}
       >
         <path
           strokeWidth={3}
@@ -125,7 +132,9 @@ export function Blocker(props: BlockerProps) {
         style={{
           transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
           transform: `rotate(${rotation}deg) translateY(${translation}px)`,
-          transition: `transform ${ROTATION_TIMING}ms linear`
+          transition: ring.isBeingDragged
+            ? undefined
+            : `transform ${ROTATION_TIMING}ms linear`
         }}
       >
         <path

@@ -341,21 +341,24 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
 
           <ExteriorBorder />
 
-          {ringStates.map(
-            ring =>
-              ring && (
+          {ringStates.map(ring => {
+            if (!ring) return null;
+            const isSelected = ring.index === this.state.selected;
+            const isBeingDragged = isSelected && this.state.dragInfo !== null;
+            return (
                 <Ring
                   key={ring.index}
                   index={ring.index}
-                  isSelected={ring.index === this.state.selected}
+                isSelected={isSelected}
                   lasers={ring.lasers}
                   blockers={ring.blockers}
                   rotationOffset={ring.rotationOffset}
                   isDisabled={ring.isDisabled}
                   onMouseDown={this.handleRingMouseDown}
+                isBeingDragged={isBeingDragged}
                 />
-              )
-          )}
+            );
+          })}
 
           {this.currentStage.ports.map(position => (
             <PowerPort

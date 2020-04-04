@@ -10,6 +10,7 @@ interface RingProps extends RingState {
     event: React.MouseEvent<SVGCircleElement, MouseEvent>,
     ringIndex: number
   ) => void;
+  isBeingDragged: boolean;
 }
 
 function Ring(props: RingProps) {
