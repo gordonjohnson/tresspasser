@@ -18,7 +18,43 @@ const normalize = (position: number) => {
     // negative positions should wrap back around
     normalizedPosition += 12;
   }
-  return normalizedPosition;
+  return roundWithinTolerance(normalizedPosition);
 };
 
-export { normalize };
+const throttle = (callback: (event: any) => void, delay: number) => {
+  let throttleTimeout: NodeJS.Timeout | null = null;
+  let storedEvent: any = null;
+
+  const throttledEventHandler = (event: any) => {
+    storedEvent = event;
+
+    const shouldHandleEvent = !throttleTimeout;
+
+    if (shouldHandleEvent) {
+      callback(storedEvent);
+
+      storedEvent = null;
+
+      throttleTimeout = setTimeout(() => {
+        throttleTimeout = null;
+
+        if (storedEvent) {
+          throttledEventHandler(storedEvent);
+        }
+      }, delay);
+    }
+  };
+
+  return throttledEventHandler;
+};
+
+const roundWithinTolerance = (num: number, acceptableTolerance = 0.22) => {
+  var nearestRoundNumber = Math.round(num);
+  var difference = Math.abs(nearestRoundNumber - num);
+  if (difference <= acceptableTolerance + Number.EPSILON) {
+    return nearestRoundNumber;
+  }
+  return num;
+};
+
+export { normalize, throttle, roundWithinTolerance };

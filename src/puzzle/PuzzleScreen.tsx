@@ -5,38 +5,9 @@ import Ring from "./Ring";
 import StageCompletedDialog from "./StageCompletedDialog";
 import STAGES from "./stages";
 import { LaserState, RingState, StageRingLayout } from "./types";
-import { normalize } from "./utils";
+import { normalize, throttle, roundWithinTolerance } from "./utils";
 import * as soundEffects from "./../sounds/soundEffects";
 import Defs from "./Defs";
-
-const throttle = (callback: any, delay: number) => {
-  let throttleTimeout: NodeJS.Timeout | null = null;
-  let storedEvent: any = null;
-
-  const throttledEventHandler = (event: any) => {
-    storedEvent = event;
-
-    const shouldHandleEvent = !throttleTimeout;
-
-    if (shouldHandleEvent) {
-      callback(storedEvent);
-
-      storedEvent = null;
-
-      throttleTimeout = setTimeout(() => {
-        throttleTimeout = null;
-
-        if (storedEvent) {
-          throttledEventHandler(storedEvent);
-        }
-      }, delay);
-    }
-  };
-
-  return throttledEventHandler;
-};
-
-const logThrottled = throttle(console.table, 300);
 
 interface PuzzleScreenProps {
   stageIndex: number;
@@ -64,7 +35,9 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
   rotate = (isClockwise: boolean) => {
     this.setState(prevState => {
       const nextRotation = [...prevState.rotation];
-      nextRotation[prevState.selected] += isClockwise ? 1 : -1;
+      nextRotation[prevState.selected] = Math.floor(
+        nextRotation[prevState.selected] + (isClockwise ? 1 : -1)
+      );
       return {
         rotation: nextRotation
       };
@@ -85,51 +58,48 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     }));
   };
 
-  handleMouseMove = (event: any) => {
+  handleMouseMove = throttle((event: MouseEvent) => {
     if (this.state.dragInfo === null) return;
 
     const center = {
       x: window.innerWidth / 2,
       y: window.innerHeight / 2
     };
-
     const startX = this.state.dragInfo.startingClickPoint.x - center.x;
     const startY = this.state.dragInfo.startingClickPoint.y - center.y;
     const currentX = event.pageX - center.x;
     const currentY = event.pageY - center.y;
 
     // Angle between the start point and the center
-    const startAngle = (Math.atan2(startY, startX) * 180) / Math.PI;
+    const startAngle = Math.atan2(startY, startX);
     // Angle between the current point and center
-    const currentAngle = (Math.atan2(currentY, currentX) * 180) / Math.PI;
-    let deltaAngle = currentAngle - startAngle;
-
-    const rounded = Math.round(deltaAngle / 30);
-
-    logThrottled({
-      start: { x: startX, y: startY, angle: Math.round(startAngle) },
-      current: { x: currentX, y: currentY, angle: Math.round(currentAngle) },
-      delta: { angle: deltaAngle }
-    });
+    const currentAngle = Math.atan2(currentY, currentX);
+    const deltaAngle = (currentAngle - startAngle) * (180 / Math.PI);
+    const deltaPosition = deltaAngle / 30;
 
     this.setState(prevState => {
       if (
-        prevState.dragInfo!.startingRingPosition + rounded !==
-        prevState.rotation[prevState.selected]
+        prevState.rotation[prevState.selected] !==
+        prevState.dragInfo!.startingRingPosition + deltaPosition
       ) {
         const nextRotation = [...prevState.rotation];
         nextRotation[prevState.selected] =
-          prevState.dragInfo!.startingRingPosition + rounded;
+          prevState.dragInfo!.startingRingPosition + deltaPosition;
         return {
           rotation: nextRotation
         };
       }
       return null;
     });
-  };
+  }, 30);
 
-  handleMouseUp = (event: any) => {
-    this.setState({ dragInfo: null });
+  handleMouseUp = (event: MouseEvent) => {
+    this.setState(prevState => {
+      return {
+        dragInfo: null,
+        rotation: prevState.rotation.map(roundWithinTolerance)
+      };
+    });
   };
 
   selectAdjacentRing = (isOutward: boolean) => {
@@ -173,14 +143,14 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
 
   componentDidMount() {
     document.addEventListener("keydown", this.keyboardListener);
-    // document.addEventListener("mousemove", this.handleMouseMove);
+    document.addEventListener("mousemove", this.handleMouseMove);
     document.addEventListener("mouseup", this.handleMouseUp);
     soundEffects.startStage.play();
   }
 
   componentWillUnmount() {
     document.removeEventListener("keydown", this.keyboardListener);
-    // document.removeEventListener("mousemove", this.handleMouseMove);
+    document.removeEventListener("mousemove", this.handleMouseMove);
     document.removeEventListener("mouseup", this.handleMouseUp);
   }
 
@@ -200,6 +170,8 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
     if (hasWon) {
       soundEffects.finalPortPowered.play();
       document.removeEventListener("keydown", this.keyboardListener);
+      document.removeEventListener("mousemove", this.handleMouseMove);
+      document.removeEventListener("mouseup", this.handleMouseUp);
     } else {
       for (let port of poweredPorts) {
         if (!prevPoweredPorts.has(port)) {
@@ -326,6 +298,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1920 861"
+          preserveAspectRatio="xMidYMid slice"
           style={{
             width: "100vw",
             height: "100vh",
@@ -334,8 +307,6 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
             filter: hasWon ? "blur(5px)" : undefined,
             cursor: this.state.dragInfo ? "move" : undefined
           }}
-          preserveAspectRatio="xMidYMid slice"
-          onMouseMove={this.handleMouseMove}
         >
           <Defs />
 
@@ -346,17 +317,17 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
             const isSelected = ring.index === this.state.selected;
             const isBeingDragged = isSelected && this.state.dragInfo !== null;
             return (
-                <Ring
-                  key={ring.index}
-                  index={ring.index}
+              <Ring
+                key={ring.index}
+                index={ring.index}
                 isSelected={isSelected}
-                  lasers={ring.lasers}
-                  blockers={ring.blockers}
-                  rotationOffset={ring.rotationOffset}
-                  isDisabled={ring.isDisabled}
-                  onMouseDown={this.handleRingMouseDown}
+                lasers={ring.lasers}
+                blockers={ring.blockers}
+                rotationOffset={ring.rotationOffset}
+                isDisabled={ring.isDisabled}
+                onMouseDown={this.handleRingMouseDown}
                 isBeingDragged={isBeingDragged}
-                />
+              />
             );
           })}
 
