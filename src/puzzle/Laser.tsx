@@ -119,8 +119,43 @@ const redBeamParts = {
   }
 };
 
-const GreenBeam = (props: LaserProps) => beamFormer(greenBeamParts, props);
 const RedBeam = (props: LaserProps) => beamFormer(redBeamParts, props);
+
+const GreenBeam = (props: LaserProps) => {
+  return (
+    <>
+      {beamFormer(greenBeamParts, props)}
+      <GreenBeamImpactFlare {...props} />
+    </>
+  );
+};
+
+const GreenBeamImpactFlare = (props: LaserProps) => {
+  return (
+    <g
+      filter={`url(#${Filter.PowerPortImpactFlare})`}
+      style={{
+        mixBlendMode: "screen",
+        transform: `rotate(180deg) ${
+          props.ring.isSelected ? "scaleX(1)" : "scaleX(0.6)"
+        }`,
+        transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px`,
+        visibility: "visible"
+      }}
+    >
+      <path
+        d="m 987.93072,83 a 27.930717,7.6013975 0 0 1 -13.96536,6.583003 27.930717,7.6013975 0 0 1 -27.93072,0 A 27.930717,7.6013975 0 0 1 932.06928,86.625 l 27.93072,0 z"
+        fill="#38ff14"
+      />
+      <path
+        d="m 983.33452,83 a 23.334524,5.126524 0 0 1 -11.66726,4.4397 23.334524,5.126524 0 0 1 -23.33452,0 23.334524,5.126524 0 0 1 -11.66726,-4.4397 l 23.33452,0 z"
+        fill="white"
+      />
+      <path d={`m ${ORIGIN.x - 12},83 a 24,422 0 0 0 24,0 z`} fill="#ddff99" />
+      <path d={`m ${ORIGIN.x - 4},83 a 8,360 0 0 0 8,0 z`} fill="white" />
+    </g>
+  );
+};
 
 const beamFormer = (parts: BeamParts, props: LaserProps) => {
   const { startingPosition, ring } = props;
