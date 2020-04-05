@@ -96,7 +96,7 @@ const STAGES: ReadonlyArray<StageLayout> = [
     ]
   },
   {
-    name: "remake #6 Batalia 1:17",
+    name: "remake #6 Batalia HARD 1:17",
     difficulty: "Hard",
     ports: [6, 8, 9, 11],
     rings: [
@@ -108,7 +108,7 @@ const STAGES: ReadonlyArray<StageLayout> = [
   },
 
   {
-    name: "remake #2 kerwan 0:00",
+    name: "remake #2 kerwan HARD 0:00",
     difficulty: "Hard",
     ports: [4, 6, 7, 9],
     rings: [

@@ -326,6 +326,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps, PuzzleScreenState> {
                 rotationOffset={ring.rotationOffset}
                 isDisabled={ring.isDisabled}
                 onMouseDown={this.handleRingMouseDown}
+                onDoubleClick={this.togglePower}
                 isBeingDragged={isBeingDragged}
               />
             );

@@ -10,11 +10,18 @@ interface RingProps extends RingState {
     event: React.MouseEvent<SVGCircleElement, MouseEvent>,
     ringIndex: number
   ) => void;
+  onDoubleClick: () => void;
   isBeingDragged: boolean;
 }
 
 function Ring(props: RingProps) {
-  const { lasers = [], blockers = [], onMouseDown, ...ring } = props;
+  const {
+    lasers = [],
+    blockers = [],
+    onMouseDown,
+    onDoubleClick,
+    ...ring
+  } = props;
   const { index, isSelected = false, isDisabled = false } = ring;
 
   return (
@@ -23,6 +30,7 @@ function Ring(props: RingProps) {
         id={`ring-${index}-hit-box`}
         style={{ cursor: isSelected ? "move" : "pointer" }}
         onMouseDown={e => onMouseDown(e, index)}
+        onDoubleClick={onDoubleClick}
         fill="none"
         stroke={"transparent"}
         strokeWidth={48}
