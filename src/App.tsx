@@ -23,7 +23,7 @@ function DebugStageSelector() {
         userSelect: "none"
       }}
     >
-      <label>
+      <label hidden>
         Stage Select{" "}
         <select
           onChange={e => {
