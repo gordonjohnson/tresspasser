@@ -19,7 +19,8 @@ function DebugStageSelector() {
         fontSize: 16,
         position: "fixed",
         fontFamily: "Aguda",
-        zIndex: 1
+        zIndex: 1,
+        userSelect: "none"
       }}
     >
       <label>
