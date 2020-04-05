@@ -1,5 +1,5 @@
 import React from "react";
-import { ORIGIN, ROTATION_TIMING } from "./constants";
+import { ORIGIN } from "./constants";
 import { Filter, Gradient } from "./Defs";
 
 type PowerPortProps = {
